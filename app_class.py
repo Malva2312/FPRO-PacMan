@@ -11,28 +11,47 @@ class App:
         self.running = True
         self.state = "start"
         
+        self.load()
         
+####################################################### MAIN_LOOP
     def run(self):
         while self.running:
             if self.state == "start":
                 self.start_events()
                 self.start_update()
                 self.start_draw()
-            # else:
-            #     pass
+            elif self.state == "playing":
+                self.playing_events()
+                self.playing_update()
+                self.playing_draw()
+            else:
+                self.running = False
+                
             self.clock.tick(FPS)
         pygame.quit()
         sys.exit()
-#######################################################HELP
-    def draw_some_text(self, astring, screen, pos, size, colour, font_name):
+        
+    
+####################################################### DRAW
+    def draw_some_text(self, astring, screen, position, size, colour, font_name):
        font = pygame.font.SysFont(font_name, size) 
        text = font.render(astring, False, colour)
        text_size = text.get_size()
        #centering the sentence:
-       pos[1] = pos[1]-text_size[1]//2
-       pos[0] = pos[0]-text_size[0]//2
-       screen.blit(text, pos)
-#######################################################INTRO
+       position[1] = position[1]-text_size[1]//2
+       position[0] = position[0]-text_size[0]//2
+       screen.blit(text, position)
+    
+    def load(self):
+        self.background = pygame.image.load("PAC_MAN_MAZE.png")
+        self.background = pygame.transform.scale(self.background, (WIDTH, HEIGHT))
+        
+    
+    def draw_grid(self):
+        for x in range(0, (WIDTH*73//1369) +1):
+            pygame.draw.line(self.screen, RED, (x*(WIDTH/((WIDTH*73/1369))), 0), (x*(WIDTH/(WIDTH*73/1369)), HEIGHT))     #""TENHO UM PROBELMA AQUI!!""#
+        
+####################################################### START
     def start_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -45,6 +64,22 @@ class App:
         pass
     
     def start_draw(self):
-        self.screen.fill(COLOUR)
-        self.draw_some_text("PUSH SPACE BAR",self.screen,[WIDTH//2, HEIGHT//2], TEXT_SIZE,(240, 134, 37), START_SOURCE) #(240, 134, 37)== orange
+        self.screen.fill((0, 0, 0))
+        self.draw_some_text("PRESS SPACE BAR",self.screen,[WIDTH//2, HEIGHT//2], TEXT_SIZE,(240, 134, 37), START_SOURCE) #(240, 134, 37)== orange
+        pygame.display.update()
+        
+
+####################################################### PLAYING
+    def playing_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+                
+                
+    def playing_update(self):
+        pass
+    
+    def playing_draw(self):
+        self.screen.blit(self.background, (0,0))
+        self.draw_grid()
         pygame.display.update()
