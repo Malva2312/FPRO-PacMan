@@ -12,6 +12,7 @@ FPS = 60
 BLACK = (0, 0, 0) #BLACK RGB
 RED = (202, 52, 51)
 GRAY = (107, 107, 107)
+WHITE =(255, 255, 255)
 #source settings
 TEXT_SIZE = 16
 START_SOURCE = "arial black"

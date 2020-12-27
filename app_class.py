@@ -35,13 +35,15 @@ class App:
         
     
 ####################################################### DRAW
-    def draw_some_text(self, astring, screen, position, size, colour, font_name):
+    def draw_some_text(self, astring, screen, position, size, colour, font_name, CENTER_WIDTH = True,CENTER_HEIGHT=True):
        font = pygame.font.SysFont(font_name, size) 
        text = font.render(astring, False, colour)
        text_size = text.get_size()
        #centering the sentence:
-       position[1] = position[1]-text_size[1]//2
-       position[0] = position[0]-text_size[0]//2
+       if CENTER_HEIGHT:
+           position[1] = position[1]-text_size[1]//2
+       if CENTER_WIDTH:
+            position[0] = position[0]-text_size[0]//2
        screen.blit(text, position)
     
     def load(self):
@@ -56,7 +58,7 @@ class App:
         for y in range(0, 21):
             pygame.draw.line(self.background, RED, (0, y*(HEIGHT/(self.cell_height))), (WIDTH, y*(HEIGHT/(self.cell_height))))
         
-####################################################### START
+####################################################### INTRODUCTION
     def start_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -87,4 +89,6 @@ class App:
     def playing_draw(self):
         self.screen.blit(self.background, (0, TOP_BOT_BUFF/2))
         self.draw_grid()
+        self.draw_some_text("HIGH SCORE: {}".format("0 for now"), self.screen, [0, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=False) #HIGH SCORE MUST CHANGE
+        self.draw_some_text("SCORE: {}".format("0 for now"), self.screen, [3/4 * WIDTH, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=True) #SCORE MUST CHANGE
         pygame.display.update()
