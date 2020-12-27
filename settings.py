@@ -1,6 +1,12 @@
 # screen settings
-WIDTH, HEIGHT = 224*2, 288*2
+TOP_BOT_BUFF = 50
+
+WIDTH, HEIGHT = 224*2, 288*2 +TOP_BOT_BUFF
+
+MAZE_WIDTH, MAZE_HEIGHT = WIDTH, HEIGHT - TOP_BOT_BUFF
+
 FPS = 60
+
 # colour settings
 
 BLACK = (0, 0, 0) #BLACK RGB

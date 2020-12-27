@@ -10,6 +10,8 @@ class App:
         self.clock = pygame.time.Clock()
         self.running = True
         self.state = "start"
+        self.cell_width = MAZE_WIDTH/23.6
+        self.cell_height = MAZE_HEIGHT/25.3
         
         self.load()
         
@@ -44,12 +46,15 @@ class App:
     
     def load(self):
         self.background = pygame.image.load("PAC_MAN_MAZE.png")
-        self.background = pygame.transform.scale(self.background, (WIDTH, HEIGHT))
+        self.background = pygame.transform.scale(self.background, (MAZE_WIDTH, MAZE_HEIGHT))
         
     
     def draw_grid(self):
-        for x in range(0, (WIDTH*73//1369) +1):
-            pygame.draw.line(self.screen, RED, (x*(WIDTH/((WIDTH*73/1369))), 0), (x*(WIDTH/(WIDTH*73/1369)), HEIGHT))     #""TENHO UM PROBELMA AQUI!!""#
+        for x in range(0, 19):
+            pygame.draw.line(self.background, RED, (x*(WIDTH/((self.cell_width))), 0), (x*(WIDTH/(self.cell_width)), HEIGHT))
+        
+        for y in range(0, 21):
+            pygame.draw.line(self.background, RED, (0, y*(HEIGHT/(self.cell_height))), (WIDTH, y*(HEIGHT/(self.cell_height))))
         
 ####################################################### START
     def start_events(self):
@@ -80,6 +85,6 @@ class App:
         pass
     
     def playing_draw(self):
-        self.screen.blit(self.background, (0,0))
+        self.screen.blit(self.background, (0, TOP_BOT_BUFF/2))
         self.draw_grid()
         pygame.display.update()
