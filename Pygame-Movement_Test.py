@@ -8,10 +8,10 @@ screen = pygame.display.set_mode((WIDTH,HIGH))
 
 pygame.display.set_caption("Projeto Pac-Man")
 
-x, y = 50, 50             #posição inicial, posição pac man
-raio = 15                         # raio
-vel = 10  #ajustar velocidade!!
-
+x, y = 0,0        #posição inicial, posição pac man
+raio = 25                      # raio
+velx = 15  #ajustar velocidade!!
+vely = 15
 
 run = True     #main loop
 
@@ -26,16 +26,16 @@ while run:
     keys = pygame.key.get_pressed()
     
     #movement pac_man
-    if keys[pygame.K_LEFT] and (x - math.cos(math.pi/4)*raio > vel):
-        x -= vel
-    if keys[pygame.K_RIGHT] and x + 2 *raio  - WIDTH < vel:
-        x += vel
-    if keys[pygame.K_UP] and y - math.cos(math.pi/4)*raio > vel:
-        y -= vel
-    if keys[pygame.K_DOWN] and y + 2 *raio  - HIGH < vel:
-        y += vel
+    if keys[pygame.K_LEFT] and x > velx:
+        x -= velx
+    if keys[pygame.K_RIGHT] and x - WIDTH < velx:
+        x += velx
+    if keys[pygame.K_UP]: #and y - math.cos(math.pi/4)*raio > vel:
+        y -= vely
+    if keys[pygame.K_DOWN]: #and y + 2 *raio  - HIGH < vel:
+        y += vely
     
-    screen.fill((0,0,0))
+    # screen.fill((0,0,0))
     
     pygame.draw.circle(screen, (255, 255, 0), (x, y), raio)
     pygame.display.update()

@@ -1,8 +1,9 @@
 import pygame, sys
 from settings import *
+from Player import *
 
 pygame.init()
-vec = pygame.math.Vector2
+# vec = pygame.math.Vector2
 
 class App:
     def __init__(self):
@@ -10,8 +11,11 @@ class App:
         self.clock = pygame.time.Clock()
         self.running = True
         self.state = "start"
-        self.cell_width = MAZE_WIDTH/23.6
-        self.cell_height = MAZE_HEIGHT/25.3
+        self.cell_width = MAZE_WIDTH/23.5789
+        self.cell_height = MAZE_HEIGHT/25.255
+        # self.x, self.y= MAZE_WIDTH/2, MAZE_HEIGHT/2 + MAZE_HEIGHT/21
+        # self.xvel, self.yvel = MAZE_WIDTH/19, MAZE_HEIGHT/21
+        self.player =  Player(self, START_POINT)
         
         self.load()
         
@@ -30,6 +34,7 @@ class App:
                 self.running = False
                 
             self.clock.tick(FPS)
+            # pygame.time.delay(188)    #????
         pygame.quit()
         sys.exit()
         
@@ -81,7 +86,15 @@ class App:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-                
+        self.keys = pygame.key.get_pressed()
+        if self.keys[pygame.K_LEFT]:# and (self.player.start_point[0] + RADIOS - vel >2* cell):
+            self.player.start_point[0] -= vel
+        if self.keys[pygame.K_RIGHT]:# and (self.player.start_point[0] + RADIOS + vel < MAZE_WIDTH - MAZE_WIDTH/19):
+            self.player.start_point[0] += vel
+        if self.keys[pygame.K_UP]:
+            self.player.start_point[1] -= vel
+        if self.keys[pygame.K_DOWN]:
+            self.player.start_point[1] += vel
                 
     def playing_update(self):
         pass
@@ -91,4 +104,10 @@ class App:
         self.draw_grid()
         self.draw_some_text("HIGH SCORE: {}".format("0 for now"), self.screen, [0, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=False) #HIGH SCORE MUST CHANGE
         self.draw_some_text("SCORE: {}".format("0 for now"), self.screen, [3/4 * WIDTH, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=True) #SCORE MUST CHANGE
+        self.player.draw()
+        
         pygame.display.update()
+        
+        
+app = App()
+app.run()
