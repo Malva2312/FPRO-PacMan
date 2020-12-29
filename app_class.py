@@ -13,8 +13,6 @@ class App:
         self.state = "start"
         self.cell_width = MAZE_WIDTH/23.5789
         self.cell_height = MAZE_HEIGHT/25.255
-        # self.x, self.y= MAZE_WIDTH/2, MAZE_HEIGHT/2 + MAZE_HEIGHT/21
-        # self.xvel, self.yvel = MAZE_WIDTH/19, MAZE_HEIGHT/21
         self.player =  Player(self, START_POINT)
         
         self.load()
@@ -27,6 +25,7 @@ class App:
                 self.start_update()
                 self.start_draw()
             elif self.state == "playing":
+                self.keys = pygame.key.get_pressed()
                 self.playing_events()
                 self.playing_update()
                 self.playing_draw()
@@ -34,7 +33,7 @@ class App:
                 self.running = False
                 
             self.clock.tick(FPS)
-            # pygame.time.delay(188)    #????
+            # pygame.time.delay(50)    #????
         pygame.quit()
         sys.exit()
         
@@ -62,7 +61,37 @@ class App:
         
         for y in range(0, 21):
             pygame.draw.line(self.background, RED, (0, y*(HEIGHT/(self.cell_height))), (WIDTH, y*(HEIGHT/(self.cell_height))))
+
+
+####################################################### MOVEMENT     
+    def move(self,keys, vel_x, vel_y):
         
+        if keys[pygame.K_LEFT]:
+            if self.player.start_point[1] > TOP_BOT_BUFF/2 + 9*(MAZE_HEIGHT/21) and self.player.start_point[1] < TOP_BOT_BUFF/2 + 10*(MAZE_HEIGHT/21):
+                if self.player.start_point[0] - vel_x + RADIOS < 0:
+                    self.player.start_point[0] = MAZE_WIDTH + RADIOS
+                else:
+                    self.player.start_point[0] -= vel_x
+            else:
+                self.player.start_point[0] -= vel_x
+                
+        elif keys[pygame.K_RIGHT]:
+            if self.player.start_point[1] > TOP_BOT_BUFF/2 + 9*(MAZE_HEIGHT/21) and self.player.start_point[1] < TOP_BOT_BUFF/2 + 10*(MAZE_HEIGHT/21):
+                if self.player.start_point[0] + vel_x - RADIOS > MAZE_WIDTH:
+                    self.player.start_point[0] = 0 - RADIOS
+                else:
+                    self.player.start_point[0] += vel_x
+            else:
+                self.player.start_point[0] += vel_x
+    
+            
+        if keys[pygame.K_UP] and self.player.start_point[1] - vel_y > TOP_BOT_BUFF/2 + (1 + 0.54)*self.cell_width +1:
+            self.player.start_point[1] -= vel_y
+            
+        elif keys[pygame.K_DOWN]:
+            self.player.start_point[1] += vel_y
+            
+
 ####################################################### INTRODUCTION
     def start_events(self):
         for event in pygame.event.get():
@@ -86,28 +115,27 @@ class App:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-        self.keys = pygame.key.get_pressed()
-        if self.keys[pygame.K_LEFT]:# and (self.player.start_point[0] + RADIOS - vel >2* cell):
-            self.player.start_point[0] -= vel
-        if self.keys[pygame.K_RIGHT]:# and (self.player.start_point[0] + RADIOS + vel < MAZE_WIDTH - MAZE_WIDTH/19):
-            self.player.start_point[0] += vel
-        if self.keys[pygame.K_UP]:
-            self.player.start_point[1] -= vel
-        if self.keys[pygame.K_DOWN]:
-            self.player.start_point[1] += vel
+        
+        
+        self.move(self.keys, vel_x, vel_y)
+        
                 
     def playing_update(self):
         pass
     
     def playing_draw(self):
+        
         self.screen.blit(self.background, (0, TOP_BOT_BUFF/2))
         self.draw_grid()
+        
         self.draw_some_text("HIGH SCORE: {}".format("0 for now"), self.screen, [0, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=False) #HIGH SCORE MUST CHANGE
         self.draw_some_text("SCORE: {}".format("0 for now"), self.screen, [3/4 * WIDTH, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=True) #SCORE MUST CHANGE
+        
         self.player.draw()
         
         pygame.display.update()
         
-        
+####################################################### 
+       
 app = App()
 app.run()
