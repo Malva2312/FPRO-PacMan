@@ -34,7 +34,7 @@ class App:
                 self.running = False
                 
             # self.clock.tick(FPS)
-            pygame.time.delay(20)    #????
+            pygame.time.delay(30)    #????
         pygame.quit()
         sys.exit()
         
@@ -66,12 +66,12 @@ class App:
 
 ####################################################### MOVEMENT     
     def move(self,keys, vel_x, vel_y):
-        self.player.find(self.player.start_point)
+        self.player.matrix_pos(self.player.start_point)
         
         if keys[pygame.K_LEFT] and self.player.move_left:
             if self.player.start_point[1] > TOP_BOT_BUFF/2 + 9*(MAZE_HEIGHT/21) and self.player.start_point[1] < TOP_BOT_BUFF/2 + 10*(MAZE_HEIGHT/21):
                 if self.player.start_point[0] - vel_x + RADIOS < 0:
-                    self.player.start_point[0] = MAZE_WIDTH + RADIOS
+                    self.player.start_point[0] = MAZE_WIDTH - MAZE_WIDTH/19/2 - RADIOS + MAZE_WIDTH/19 + 1
                 else:
                     self.player.start_point[0] -= vel_x
                     
@@ -81,7 +81,7 @@ class App:
         elif keys[pygame.K_RIGHT] and self.player.move_right:
             if self.player.start_point[1] > TOP_BOT_BUFF/2 + 9*(MAZE_HEIGHT/21) and self.player.start_point[1] < TOP_BOT_BUFF/2 + 10*(MAZE_HEIGHT/21):
                 if self.player.start_point[0] + vel_x - RADIOS > MAZE_WIDTH:
-                    self.player.start_point[0] = 0 - RADIOS
+                    self.player.start_point[0] = MAZE_WIDTH/19/2 - RADIOS - MAZE_WIDTH/19 +1
                 else:
                     self.player.start_point[0] += vel_x
             else:
@@ -129,7 +129,7 @@ class App:
     def playing_draw(self):
         
         self.screen.blit(self.background, (0, TOP_BOT_BUFF/2))
-        self.draw_grid()
+        #self.draw_grid()
         
         self.draw_some_text("HIGH SCORE: {}".format("0 for now"), self.screen, [0, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=False) #HIGH SCORE MUST CHANGE
         self.draw_some_text("SCORE: {}".format("0 for now"), self.screen, [3/4 * WIDTH, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=True) #SCORE MUST CHANGE

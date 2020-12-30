@@ -19,30 +19,30 @@ class Player:
     
         
     def load(self):
-        self.pac_man = pygame.image.load("pacman_fill.png")
-        self.pac_man = pygame.transform.scale(self.pac_man, (RADIOS, RADIOS))
+        self.pac_man = pygame.image.load("pac_man_fill.png")
+        self.pac_man = pygame.transform.scale(self.pac_man, (DIAMETRO,DIAMETRO))
         
-    def find(self,position):
+    def matrix_pos(self,position):
         
-        if [self.start_point[0]//(MAZE_WIDTH/19) + 1, self.start_point[1]//(MAZE_HEIGHT/21)] in BLOCKS_POS:
+        if [self.start_point[0]//(MAZE_WIDTH/19) + 1, (self.start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in BLOCKS_POS:
             
             self.move_right = False
         else:
             self.move_right = True
         
-        if [self.start_point[0]//(MAZE_WIDTH/19) - 1, self.start_point[1]//(MAZE_HEIGHT/21)] in BLOCKS_POS:
+        if [self.start_point[0]//(MAZE_WIDTH/19) - 1, (self.start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in BLOCKS_POS:
             
             self.move_left = False
         else:
             self.move_left = True
         
-        if [self.start_point[0]//(MAZE_WIDTH/19), self.start_point[1]//(MAZE_HEIGHT/21) +  1] in BLOCKS_POS:
+        if [self.start_point[0]//(MAZE_WIDTH/19), (self.start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21) +  1] in BLOCKS_POS:
             
             self.move_down = False
         else:
             self.move_down = True
             
-        if [self.start_point[0]//(MAZE_WIDTH/19), self.start_point[1]//(MAZE_HEIGHT/21)- 1] in BLOCKS_POS:
+        if [self.start_point[0]//(MAZE_WIDTH/19), (self.start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)- 1] in BLOCKS_POS:
             
             self.move_up = False
         else:
