@@ -14,6 +14,7 @@ class App:
         self.cell_width = MAZE_WIDTH/23.5789
         self.cell_height = MAZE_HEIGHT/25.255
         self.player =  Player(self, START_POINT)
+        self.map_matrix = MAZE_LIMITS
         
         self.load()
         
@@ -32,8 +33,8 @@ class App:
             else:
                 self.running = False
                 
-            self.clock.tick(FPS)
-            # pygame.time.delay(50)    #????
+            # self.clock.tick(FPS)
+            pygame.time.delay(20)    #????
         pygame.quit()
         sys.exit()
         
@@ -65,17 +66,19 @@ class App:
 
 ####################################################### MOVEMENT     
     def move(self,keys, vel_x, vel_y):
+        self.player.find(self.player.start_point)
         
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] and self.player.move_left:
             if self.player.start_point[1] > TOP_BOT_BUFF/2 + 9*(MAZE_HEIGHT/21) and self.player.start_point[1] < TOP_BOT_BUFF/2 + 10*(MAZE_HEIGHT/21):
                 if self.player.start_point[0] - vel_x + RADIOS < 0:
                     self.player.start_point[0] = MAZE_WIDTH + RADIOS
                 else:
                     self.player.start_point[0] -= vel_x
+                    
             else:
                 self.player.start_point[0] -= vel_x
                 
-        elif keys[pygame.K_RIGHT]:
+        elif keys[pygame.K_RIGHT] and self.player.move_right:
             if self.player.start_point[1] > TOP_BOT_BUFF/2 + 9*(MAZE_HEIGHT/21) and self.player.start_point[1] < TOP_BOT_BUFF/2 + 10*(MAZE_HEIGHT/21):
                 if self.player.start_point[0] + vel_x - RADIOS > MAZE_WIDTH:
                     self.player.start_point[0] = 0 - RADIOS
@@ -85,10 +88,10 @@ class App:
                 self.player.start_point[0] += vel_x
     
             
-        if keys[pygame.K_UP] and self.player.start_point[1] - vel_y > TOP_BOT_BUFF/2 + (1 + 0.54)*self.cell_width +1:
+        elif keys[pygame.K_UP] and self.player.move_up:
             self.player.start_point[1] -= vel_y
             
-        elif keys[pygame.K_DOWN]:
+        elif keys[pygame.K_DOWN] and self.player.move_down:
             self.player.start_point[1] += vel_y
             
 
@@ -106,7 +109,7 @@ class App:
     
     def start_draw(self):
         self.screen.fill((0, 0, 0))
-        self.draw_some_text("PRESS SPACE BAR",self.screen,[WIDTH//2, HEIGHT//2], TEXT_SIZE,(240, 134, 37), START_SOURCE) #(240, 134, 37)== orange
+        self.draw_some_text("PRESS SPACE BAR",self.screen,[WIDTH//2, HEIGHT//2], TEXT_SIZE,ORANJE, START_SOURCE)
         pygame.display.update()
         
 
@@ -132,7 +135,7 @@ class App:
         self.draw_some_text("SCORE: {}".format("0 for now"), self.screen, [3/4 * WIDTH, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=True) #SCORE MUST CHANGE
         
         self.player.draw()
-        
+        # print(self.player.start_point)
         pygame.display.update()
         
 ####################################################### 
