@@ -24,25 +24,25 @@ class Player:
         
     def matrix_pos(self,position):
         
-        if [self.start_point[0]//(MAZE_WIDTH/19) + 1, (self.start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in BLOCKS_POS:
+        if [(self.start_point[0] + DIAMETRO + vel_x)//(MAZE_WIDTH/19), (self.start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in BLOCKS_POS or [(self.start_point[0] + DIAMETRO + vel_x)//(MAZE_WIDTH/19), (self.start_point[1] + DIAMETRO - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in BLOCKS_POS:
             
             self.move_right = False
         else:
             self.move_right = True
         
-        if [self.start_point[0]//(MAZE_WIDTH/19) - 1, (self.start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in BLOCKS_POS:
+        if [(self.start_point[0] - vel_x)//(MAZE_WIDTH/19), (self.start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in BLOCKS_POS or [(self.start_point[0] - vel_x)//(MAZE_WIDTH/19), (self.start_point[1] + DIAMETRO - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in BLOCKS_POS:
             
             self.move_left = False
         else:
             self.move_left = True
         
-        if [self.start_point[0]//(MAZE_WIDTH/19), (self.start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21) +  1] in BLOCKS_POS:
+        if [self.start_point[0]//(MAZE_WIDTH/19), (self.start_point[1] - TOP_BOT_BUFF/2 + vel_y + DIAMETRO)//(MAZE_HEIGHT/21)] in BLOCKS_POS or [(self.start_point[0] + DIAMETRO)//(MAZE_WIDTH/19), (self.start_point[1] - TOP_BOT_BUFF/2 + vel_y + DIAMETRO)//(MAZE_HEIGHT/21)] in BLOCKS_POS:
             
             self.move_down = False
         else:
             self.move_down = True
             
-        if [self.start_point[0]//(MAZE_WIDTH/19), (self.start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)- 1] in BLOCKS_POS:
+        if [self.start_point[0]//(MAZE_WIDTH/19), (self.start_point[1] - TOP_BOT_BUFF/2 - vel_y)//(MAZE_HEIGHT/21)] in BLOCKS_POS or [(self.start_point[0] + DIAMETRO)//(MAZE_WIDTH/19), (self.start_point[1] - TOP_BOT_BUFF/2 - vel_y)//(MAZE_HEIGHT/21)] in BLOCKS_POS:
             
             self.move_up = False
         else:

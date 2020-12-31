@@ -33,8 +33,8 @@ class App:
             else:
                 self.running = False
                 
-            # self.clock.tick(FPS)
-            pygame.time.delay(30)    #????
+            self.clock.tick(FPS)
+            # pygame.time.delay()    #????
         pygame.quit()
         sys.exit()
         
@@ -62,12 +62,26 @@ class App:
         
         for y in range(0, 21):
             pygame.draw.line(self.background, RED, (0, y*(HEIGHT/(self.cell_height))), (WIDTH, y*(HEIGHT/(self.cell_height))))
+            
+            
+    def draw_points(self, a_matrix):
+        for y in range(0, len(a_matrix)):
+            for x in range(0, len(a_matrix[y])):
+                if a_matrix[y][x] == 0:
+                    pygame.draw.circle(self.screen, YELLOW, [x * MAZE_WIDTH/19 + MAZE_WIDTH/19/2 , y * MAZE_HEIGHT/21 + MAZE_HEIGHT/21/2 + TOP_BOT_BUFF/2], 3)
+
+    def draw_big_points(self, a_matrix):
+        for y in range(0, len(a_matrix)):
+            for x in range(0, len(a_matrix[y])):
+                if a_matrix[y][x] == 2:
+                    pygame.draw.circle(self.screen, YELLOW, [x * MAZE_WIDTH/19 + MAZE_WIDTH/19/2 , y * MAZE_HEIGHT/21 + MAZE_HEIGHT/21/2 + TOP_BOT_BUFF/2], 7)
 
 
 ####################################################### MOVEMENT     
     def move(self,keys, vel_x, vel_y):
         self.player.matrix_pos(self.player.start_point)
-        
+        dt = self.clock.tick()
+        print(dt)
         if keys[pygame.K_LEFT] and self.player.move_left:
             if self.player.start_point[1] > TOP_BOT_BUFF/2 + 9*(MAZE_HEIGHT/21) and self.player.start_point[1] < TOP_BOT_BUFF/2 + 10*(MAZE_HEIGHT/21):
                 if self.player.start_point[0] - vel_x + RADIOS < 0:
@@ -127,7 +141,6 @@ class App:
         pass
     
     def playing_draw(self):
-        
         self.screen.blit(self.background, (0, TOP_BOT_BUFF/2))
         #self.draw_grid()
         
@@ -135,6 +148,9 @@ class App:
         self.draw_some_text("SCORE: {}".format("0 for now"), self.screen, [3/4 * WIDTH, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=True) #SCORE MUST CHANGE
         
         self.player.draw()
+        
+        self.draw_points(self.map_matrix)
+        self.draw_big_points(self.map_matrix)
         # print(self.player.start_point)
         pygame.display.update()
         
