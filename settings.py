@@ -1,4 +1,4 @@
-from pygame.math import Vector2 as vec
+# from pygame.math import Vector2 as vec
 
 
 # screen settings
@@ -20,14 +20,18 @@ TEXT_SIZE = 16
 START_SOURCE = "arial black"
 
 # playes settings
-DIAMETRO = int(MAZE_WIDTH/19-5)
-RADIOS = DIAMETRO//2
-START_POINT =[MAZE_WIDTH/2 -RADIOS +1 ,MAZE_HEIGHT/2 +6*MAZE_HEIGHT/21+ -RADIOS]
-vel_x = MAZE_WIDTH/19
-vel_y = MAZE_HEIGHT/21
+DIAMETROx = int(MAZE_WIDTH/19) - 2
+DIAMETRO = int(MAZE_HEIGHT/21) -2
+
+RADIOS = DIAMETROx/2
+START_POINT =[MAZE_WIDTH/2 -    DIAMETROx/2 ,TOP_BOT_BUFF/2 + 15.5 * MAZE_HEIGHT/21 - DIAMETRO/2]
+
+vel_x = RADIOS/2 - 0.75 * MAZE_WIDTH/19/2/3                #tenho que ajustar a velocidade
+vel_y = RADIOS/2 - 0.75 * MAZE_WIDTH/19/2/3 #RADIOS/2 - 0.75 * MAZE_HEIGHT/21/3/2
 
 
-MAZE_LIMITS = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],    #0 == points, 1 == wals , 2 == big points, 3 = nothing
+MAZE_LIMITS = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],    #0 == points, 1 == walls , 2 == big points, 3 = nothing
     [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
     [1,0,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,0,1],
     [1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1],
@@ -49,7 +53,7 @@ MAZE_LIMITS = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],    #0 == points, 1 == wa
     [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
 
-BLOCKS_POS = []
+BLOCKS_POS = [[-1, 8], [-1, 10], [21,8], [21,10], [-2, 8], [-2, 10], [22,8], [22,10]]
 for y in range(len(MAZE_LIMITS)):
     for x in range(len(MAZE_LIMITS[y])):
         if MAZE_LIMITS[y][x] == 1:

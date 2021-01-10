@@ -11,10 +11,19 @@ class App:
         self.clock = pygame.time.Clock()
         self.running = True
         self.state = "start"
+        
         self.cell_width = MAZE_WIDTH/23.5789
         self.cell_height = MAZE_HEIGHT/25.255
+        
         self.player =  Player(self, START_POINT)
         self.map_matrix = MAZE_LIMITS
+        
+        self.move_up = False
+        self.move_down = False
+        self.move_left = False
+        self.move_right = False
+        
+        self.score = 0
         
         self.load()
         
@@ -33,8 +42,8 @@ class App:
             else:
                 self.running = False
                 
-            self.clock.tick(FPS)
-            # pygame.time.delay()    #????
+            # self.clock.tick(FPS)
+            pygame.time.delay(20)    #????
         pygame.quit()
         sys.exit()
         
@@ -65,6 +74,7 @@ class App:
             
             
     def draw_points(self, a_matrix):
+        
         for y in range(0, len(a_matrix)):
             for x in range(0, len(a_matrix[y])):
                 if a_matrix[y][x] == 0:
@@ -79,35 +89,64 @@ class App:
 
 ####################################################### MOVEMENT     
     def move(self,keys, vel_x, vel_y):
-        self.player.matrix_pos(self.player.start_point)
-        dt = self.clock.tick()
-        print(dt)
+        self.player.matrix_pos(self.player.start_point)        
+        
         if keys[pygame.K_LEFT] and self.player.move_left:
-            if self.player.start_point[1] > TOP_BOT_BUFF/2 + 9*(MAZE_HEIGHT/21) and self.player.start_point[1] < TOP_BOT_BUFF/2 + 10*(MAZE_HEIGHT/21):
-                if self.player.start_point[0] - vel_x + RADIOS < 0:
-                    self.player.start_point[0] = MAZE_WIDTH - MAZE_WIDTH/19/2 - RADIOS + MAZE_WIDTH/19 + 1
-                else:
-                    self.player.start_point[0] -= vel_x
-                    
-            else:
-                self.player.start_point[0] -= vel_x
-                
+            self.move_up = False
+            self.move_down = False
+            self.move_left = True
+            self.move_right = False
+            
         elif keys[pygame.K_RIGHT] and self.player.move_right:
-            if self.player.start_point[1] > TOP_BOT_BUFF/2 + 9*(MAZE_HEIGHT/21) and self.player.start_point[1] < TOP_BOT_BUFF/2 + 10*(MAZE_HEIGHT/21):
-                if self.player.start_point[0] + vel_x - RADIOS > MAZE_WIDTH:
-                    self.player.start_point[0] = MAZE_WIDTH/19/2 - RADIOS - MAZE_WIDTH/19 +1
-                else:
-                    self.player.start_point[0] += vel_x
-            else:
-                self.player.start_point[0] += vel_x
-    
+            self.move_up = False
+            self.move_down = False
+            self.move_left = False
+            self.move_right = True
             
         elif keys[pygame.K_UP] and self.player.move_up:
-            self.player.start_point[1] -= vel_y
+            self.move_up = True
+            self.move_down = False
+            self.move_left = False
+            self.move_right = False
             
         elif keys[pygame.K_DOWN] and self.player.move_down:
-            self.player.start_point[1] += vel_y
+            self.move_up = False
+            self.move_down = True
+            self.move_left = False
+            self.move_right = False
+        
+        
+        # 330.9342105263149
+        # 96.0657894736841
+        if self.player.move_left and self.move_left:
+            if self.player.start_point[0]  < 0:
+                self.move_up = False
+                self.move_down = False
+                
+            if self.player.start_point[0] - vel_x + DIAMETROx - 1 < 0:
+                
+                self.player.start_point[0] = MAZE_WIDTH - (self.player.start_point[0] + vel_x)
+            else:
+                self.player.start_point[0] -= vel_x
+                    
+                
+        if self.move_right and self.player.move_right:
+            if self.player.start_point[0] + DIAMETROx  > MAZE_WIDTH:
+                self.move_up = False
+                self.move_down = False
             
+            if self.player.start_point[0] + vel_x + 1 > MAZE_WIDTH:
+                
+                self.player.start_point[0] = 0 -(self.player.start_point[0] + vel_x - DIAMETROx - MAZE_WIDTH)
+            else:
+                self.player.start_point[0] += vel_x
+            
+        if self.move_up and self.player.move_up:
+            self.player.start_point[1] -= vel_y
+            
+        if self.move_down and self.player.move_down:
+            self.player.start_point[1] += vel_y
+        
 
 ####################################################### INTRODUCTION
     def start_events(self):
@@ -138,13 +177,24 @@ class App:
         
                 
     def playing_update(self):
-        pass
+        
+        
+        if len(self.map_matrix) > int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21)):
+            if len(self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))]) > int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19)):
+                if self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] == 0:
+                    self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] = 3
+                    self.score += 10
+        
+        
+        
     
     def playing_draw(self):
-        self.screen.blit(self.background, (0, TOP_BOT_BUFF/2))
-        #self.draw_grid()
         
-        self.draw_some_text("HIGH SCORE: {}".format("0 for now"), self.screen, [0, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=False) #HIGH SCORE MUST CHANGE
+        self.screen.fill(BLACK)
+        self.screen.blit(self.background, (0, TOP_BOT_BUFF/2))
+        # self.draw_grid()
+        
+        self.draw_some_text("HIGH SCORE:  {}".format(self.score), self.screen, [0, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=False) #HIGH SCORE MUST CHANGE
         self.draw_some_text("SCORE: {}".format("0 for now"), self.screen, [3/4 * WIDTH, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=True) #SCORE MUST CHANGE
         
         self.player.draw()
@@ -155,6 +205,10 @@ class App:
         pygame.display.update()
         
 ####################################################### 
-       
+    
+        
+        
+
+####################################################### 
 app = App()
 app.run()
