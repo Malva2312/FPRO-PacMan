@@ -23,6 +23,8 @@ class App:
         self.move_left = False
         self.move_right = False
         
+        # self.player.animation_count = 0
+        
         self.score = 0
         
         self.load()
@@ -114,40 +116,59 @@ class App:
             self.move_down = True
             self.move_left = False
             self.move_right = False
+            
+        
+        if self.player.start_point[0]  < 0:
+                self.move_up = False
+                self.move_down = False
+        
+        if self.player.start_point[0] + DIAMETROx  > MAZE_WIDTH:
+                self.move_up = False
+                self.move_down = False
         
         
         # 330.9342105263149
         # 96.0657894736841
         if self.player.move_left and self.move_left:
-            if self.player.start_point[0]  < 0:
-                self.move_up = False
-                self.move_down = False
-                
-            if self.player.start_point[0] - vel_x + DIAMETROx - 1 < 0:
-                
+            
+            if self.player.start_point[0] - vel_x + DIAMETROx < 0:
                 self.player.start_point[0] = MAZE_WIDTH - (self.player.start_point[0] + vel_x)
+                
             else:
                 self.player.start_point[0] -= vel_x
                     
                 
-        if self.move_right and self.player.move_right:
-            if self.player.start_point[0] + DIAMETROx  > MAZE_WIDTH:
-                self.move_up = False
-                self.move_down = False
-            
-            if self.player.start_point[0] + vel_x + 1 > MAZE_WIDTH:
                 
-                self.player.start_point[0] = 0 -(self.player.start_point[0] + vel_x - DIAMETROx - MAZE_WIDTH)
+                
+        if self.move_right and self.player.move_right:
+            
+            if self.player.start_point[0] + vel_x  > MAZE_WIDTH:
+                self.player.start_point[0] = MAZE_WIDTH - (self.player.start_point[0]  + DIAMETRO)
+                
             else:
                 self.player.start_point[0] += vel_x
             
+            
+            
         if self.move_up and self.player.move_up:
+            
             self.player.start_point[1] -= vel_y
+            
             
         if self.move_down and self.player.move_down:
             self.player.start_point[1] += vel_y
+            
+        # print((self.player.move_left and self.move_left) or (self.move_right and self.player.move_right) or (self.move_up and self.player.move_up) or (self.move_down and self.player.move_down))
         
-
+        if (self.player.move_left and self.move_left) or (self.move_right and self.player.move_right) or (self.move_up and self.player.move_up) or (self.move_down and self.player.move_down):
+            
+            self.player.animation_count+= 1
+            if self.player.animation_count== 8:
+                self.player.animation_count= 0
+        else:
+            self.player.animation_count = 0
+            
+        # print(self.player.animation_count)
 ####################################################### INTRODUCTION
     def start_events(self):
         for event in pygame.event.get():
@@ -179,11 +200,12 @@ class App:
     def playing_update(self):
         
         
-        if len(self.map_matrix) > int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21)):
-            if len(self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))]) > int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19)):
-                if self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] == 0:
-                    self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] = 3
-                    self.score += 10
+        if int((self.player.start_point[0]  ) // (MAZE_WIDTH/19)) > 0 and int((self.player.start_point[0] + DIAMETROx) // (MAZE_WIDTH/19)) < MAZE_WIDTH:
+            if len(self.map_matrix) > int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21)):
+                if len(self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))]) > int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19)):
+                    if self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] == 0:
+                        self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] = 3
+                        self.score += 10
         
         
         
