@@ -68,8 +68,8 @@ for y in range(len(MAZE_LIMITS)):
             
 MOB_DIAMETROx , MOB_DIAMETRO = DIAMETROx - 2 , DIAMETRO - 2
             
-MOB_START_POINT = [MAZE_WIDTH/2 - MOB_DIAMETROx/2 ,TOP_BOT_BUFF + 6.5* (MAZE_HEIGHT/21) - MOB_DIAMETRO/2]
+MOB_START_POINT = [MAZE_WIDTH/2 - DIAMETROx/2 ,TOP_BOT_BUFF + 6.5* (MAZE_HEIGHT/21) - MOB_DIAMETRO/2]
 
-mob_vel_x = vel_x * (1/2)
-mob_vel_y = vel_y *(1/2)
+mob_vel_x = vel_x * (2/3)
+mob_vel_y = vel_y *(2/3)
 

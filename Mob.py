@@ -15,7 +15,10 @@ class Mob:
         self.blinky_move_down = False
         self.blinky_move_left = False
         self.blinky_move_right = False
-    
+        
+        
+        self.count = 0
+        
         self.load()
         
     
@@ -71,35 +74,99 @@ class Mob:
         ABSx = abs( self.app.player.start_point[0] - self.blinky_start_point[0]) > 1
         ABSy = abs(  self.app.player.start_point[1] - self.blinky_start_point[1] ) > 1
         
-        if (self.app.player.start_point[0] < self.blinky_start_point[0] and self.move_left) and ABSx:    # or X > Y:
-            self.blinky_move_up = False
-            self.blinky_move_down = False
-            self.blinky_move_left = True
-            self.blinky_move_right = False
+        if self.count == 0:
+            if X >= Y:
+                if (self.app.player.start_point[0] < self.blinky_start_point[0] and self.move_left) and ABSx:    # or X > Y:
+                    self.blinky_move_up = False
+                    self.blinky_move_down = False
+                    self.blinky_move_left = True
+                    self.blinky_move_right = False
+                    
+                elif self.app.player.start_point[0] > self.blinky_start_point[0] and self.move_right and ABSx: # and X>Y:
+                    self.blinky_move_up = False
+                    self.blinky_move_down = False
+                    self.blinky_move_left = False
+                    self.blinky_move_right = True
+                    
+                elif self.app.player.start_point[1] < self.blinky_start_point[1] and self.move_up and ABSy:  #  and Y>X:
+                    self.blinky_move_up = True
+                    self.blinky_move_down = False
+                    self.blinky_move_left = False
+                    self.blinky_move_right = False
+                    
+                    
+                elif self.app.player.start_point[1] > self.blinky_start_point[1] and self.move_down and ABSy: # and Y>X:
+                    self.blinky_move_up = False
+                    self.blinky_move_down = True
+                    self.blinky_move_left = False
+                    self.blinky_move_right = False
+                
+                
             
+                else:
+                    self.count = 1
+                    
+            elif Y >= X:
+                if self.app.player.start_point[1] < self.blinky_start_point[1] and self.move_up and ABSy:  #  and Y>X:
+                    self.blinky_move_up = True
+                    self.blinky_move_down = False
+                    self.blinky_move_left = False
+                    self.blinky_move_right = False
+                    
+                    
+                elif self.app.player.start_point[1] > self.blinky_start_point[1] and self.move_down and ABSy: # and Y>X:
+                    self.blinky_move_up = False
+                    self.blinky_move_down = True
+                    self.blinky_move_left = False
+                    self.blinky_move_right = False
+                
+                elif (self.app.player.start_point[0] < self.blinky_start_point[0] and self.move_left) and ABSx:    # or X > Y:
+                    self.blinky_move_up = False
+                    self.blinky_move_down = False
+                    self.blinky_move_left = True
+                    self.blinky_move_right = False
+                    
+                elif self.app.player.start_point[0] > self.blinky_start_point[0] and self.move_right and ABSx: # and X>Y:
+                    self.blinky_move_up = False
+                    self.blinky_move_down = False
+                    self.blinky_move_left = False
+                    self.blinky_move_right = True
+                
+                else:
+                    self.count = 1
+                    
+                    
+        else:
             
-        elif self.app.player.start_point[1] < self.blinky_start_point[1] and self.move_up and ABSy:  #  and Y>X:
-            self.blinky_move_up = True
-            self.blinky_move_down = False
-            self.blinky_move_left = False
-            self.blinky_move_right = False
-            
-            
-        elif self.app.player.start_point[1] > self.blinky_start_point[1] and self.move_down and ABSy: # and Y>X:
-            self.blinky_move_up = False
-            self.blinky_move_down = True
-            self.blinky_move_left = False
-            self.blinky_move_right = False
-            
-            
-        elif self.app.player.start_point[0] > self.blinky_start_point[0] and self.move_right and ABSx: # and X>Y:
-            self.blinky_move_up = False
-            self.blinky_move_down = False
-            self.blinky_move_left = False
-            self.blinky_move_right = True
-            
-        
-            
+            if self.count % 8 == 0:
+                
+                    a = random.randint(0,3)
+                    
+                    if a == 0:
+                        self.blinky_move_up = False
+                        self.blinky_move_down = False
+                        self.blinky_move_left = True
+                        self.blinky_move_right = False
+                    elif a == 1:
+                        self.blinky_move_up = True
+                        self.blinky_move_down = False
+                        self.blinky_move_left = False
+                        self.blinky_move_right = False
+                    elif a == 2:
+                        self.blinky_move_up = False
+                        self.blinky_move_down = True
+                        self.blinky_move_left = False
+                        self.blinky_move_right = False
+                    elif a == 3:
+                        self.blinky_move_up = False
+                        self.blinky_move_down = False
+                        self.blinky_move_left = False
+                        self.blinky_move_right = True
+                    
+                    
+            self.count += 1
+            if self.count == 16 * 16:
+                self.count = 0
         
             
         
@@ -113,14 +180,16 @@ class Mob:
             
             
         
-        if self.blinky_start_point[0]  - DIAMETROx < 0:
+        if self.blinky_start_point[0]  - MAZE_WIDTH/19 + 1< 0:
                 self.blinky_move_up = False
                 self.blinky_move_down = False
-                self.blinky_move_right = True
+                self.blinky_move_right = False
+                self.blinky_move_left = True
         
-        if self.blinky_start_point[0]  > MAZE_WIDTH:
+        if self.blinky_start_point[0] +  MOB_DIAMETROx + MAZE_WIDTH/19 -1 > MAZE_WIDTH:
                 self.blinky_move_up = False
                 self.blinky_move_down = False
+                self.blinky_move_right = False
                 self.blinky_move_left = True
         
         # 330.9342105263149
@@ -157,10 +226,10 @@ class Mob:
             
         # print((self.blinky__left and self.move_left) or (self.move_right and self.blinky__right) or (self.move_up and self.blinky__up) or (self.move_down and self.blinky__down))
         # print(self.blinky_move_up ,self.blinky_move_down, self.blinky_move_left, self.blinky_move_right)
-        print("up", self.blinky_move_up, self.move_up)
-        print("down", self.blinky_move_down, self.move_down)
-        print("left", self.blinky_move_left, self.move_left)
-        print("right", self.blinky_move_right, self.move_right)
+        # print("up", self.blinky_move_up, self.move_up)
+        # print("down", self.blinky_move_down, self.move_down)
+        # print("left", self.blinky_move_left, self.move_left)
+        # print("right", self.blinky_move_right, self.move_right)
         
         
         

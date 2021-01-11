@@ -85,12 +85,15 @@ class App:
                 if a_matrix[y][x] == 0:
                     pygame.draw.circle(self.screen, YELLOW, [x * MAZE_WIDTH/19 + MAZE_WIDTH/19/2 , y * MAZE_HEIGHT/21 + MAZE_HEIGHT/21/2 + TOP_BOT_BUFF/2], 3)
 
+
+
     def draw_big_points(self, a_matrix):
         for y in range(0, len(a_matrix)):
             for x in range(0, len(a_matrix[y])):
                 if a_matrix[y][x] == 2:
                     pygame.draw.circle(self.screen, YELLOW, [x * MAZE_WIDTH/19 + MAZE_WIDTH/19/2 , y * MAZE_HEIGHT/21 + MAZE_HEIGHT/21/2 + TOP_BOT_BUFF/2], 7)
 
+        
 
 ####################################################### MOVEMENT     
     def move(self,keys, vel_x, vel_y):
@@ -209,7 +212,14 @@ class App:
                     if self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] == 0:
                         self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] = 3
                         self.score += 10
-        
+                        
+        # if int((self.player.start_point[0]  ) // (MAZE_WIDTH/19)) > 0 and int((self.player.start_point[0] + DIAMETROx) // (MAZE_WIDTH/19)) < MAZE_WIDTH:
+        #     if len(self.map_matrix) > int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21)):
+        #         if len(self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))]) > int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19)):
+        #             if self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] == 2:
+        #                 self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] = 3
+        #                 self.score += 50
+                        
         self.mob.move(mob_vel_x, mob_vel_y)
         
     
