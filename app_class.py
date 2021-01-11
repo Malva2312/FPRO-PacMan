@@ -1,6 +1,7 @@
 import pygame, sys
 from settings import *
 from Player import *
+from Mob import *
 
 pygame.init()
 # vec = pygame.math.Vector2
@@ -16,6 +17,8 @@ class App:
         self.cell_height = MAZE_HEIGHT/25.255
         
         self.player =  Player(self, START_POINT)
+        self.mob = Mob(self, MOB_START_POINT)
+        
         self.map_matrix = MAZE_LIMITS
         
         self.move_up = False
@@ -207,7 +210,7 @@ class App:
                         self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] = 3
                         self.score += 10
         
-        
+        self.mob.move(mob_vel_x, mob_vel_y)
         
     
     def playing_draw(self):
@@ -219,11 +222,18 @@ class App:
         self.draw_some_text("HIGH SCORE:  {}".format(self.score), self.screen, [0, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=False) #HIGH SCORE MUST CHANGE
         self.draw_some_text("SCORE: {}".format("0 for now"), self.screen, [3/4 * WIDTH, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=True) #SCORE MUST CHANGE
         
-        self.player.draw()
-        
         self.draw_points(self.map_matrix)
         self.draw_big_points(self.map_matrix)
-        # print(self.player.start_point)
+        
+        
+        self.mob.draw()
+        self.player.draw()
+        
+        
+        
+        
+        # print(self.player.start_point, self.mob.blinky_start_point)
+        
         pygame.display.update()
         
 ####################################################### 

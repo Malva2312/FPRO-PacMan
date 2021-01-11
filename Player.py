@@ -1,6 +1,6 @@
 import pygame
 import math
-from pygame.math import Vector2 as vec
+# from pygame.math import Vector2 as vec
 from settings import *
     
 class Player:

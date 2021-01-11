@@ -31,7 +31,7 @@ vel_y = RADIOS/2 - 0.75 * MAZE_WIDTH/19/2/3 #RADIOS/2 - 0.75 * MAZE_HEIGHT/21/3/
 
 
 MAZE_LIMITS = [
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],    #0 == points, 1 == walls , 2 == big points, 3 = nothing
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],    #0 == points, 1 == walls , 2 == big points, 3 = nothing 5 = only for ghost
     [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
     [1,0,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,0,1],
     [1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1],
@@ -39,8 +39,8 @@ MAZE_LIMITS = [
     [1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,1],
     [1,1,1,1,0,1,1,1,3,1,3,1,1,1,0,1,1,1,1],
     [1,1,1,1,0,1,3,3,3,3,3,3,3,1,0,1,1,1,1],
-    [1,1,1,1,0,1,3,1,1,1,1,1,3,1,0,1,1,1,1],
-    [3,3,3,3,0,3,3,1,1,1,1,1,3,3,0,3,3,3,3],
+    [1,1,1,1,0,1,3,1,1,5,1,1,3,1,0,1,1,1,1],
+    [3,3,3,3,0,3,3,1,5,5,5,1,3,3,0,3,3,3,3],
     [1,1,1,1,0,1,3,1,1,1,1,1,3,1,0,1,1,1,1],
     [1,1,1,1,0,1,3,3,3,3,3,3,3,1,0,1,1,1,1],
     [1,1,1,1,0,1,3,1,1,1,1,1,3,1,0,1,1,1,1],
@@ -56,7 +56,20 @@ MAZE_LIMITS = [
 BLOCKS_POS = [[-1, 8], [-1, 10], [21,8], [21,10], [-2, 8], [-2, 10], [22,8], [22,10]]
 for y in range(len(MAZE_LIMITS)):
     for x in range(len(MAZE_LIMITS[y])):
-        if MAZE_LIMITS[y][x] == 1:
+        if MAZE_LIMITS[y][x] == 1 or MAZE_LIMITS[y][x] == 5:
             BLOCKS_POS.append([x,y])
             
 # mob settings
+MOB_BLOCKS = [[-1, 8], [-1, 10], [21,8], [21,10], [-2, 8], [-2, 10], [22,8], [22,10]]
+for y in range(len(MAZE_LIMITS)):
+    for x in range(len(MAZE_LIMITS[y])):
+        if MAZE_LIMITS[y][x] == 1 or MAZE_LIMITS[y][x] == 5:
+            MOB_BLOCKS.append([x,y])
+            
+MOB_DIAMETROx , MOB_DIAMETRO = DIAMETROx - 2 , DIAMETRO - 2
+            
+MOB_START_POINT = [MAZE_WIDTH/2 - MOB_DIAMETROx/2 ,TOP_BOT_BUFF + 6.5* (MAZE_HEIGHT/21) - MOB_DIAMETRO/2]
+
+mob_vel_x = vel_x * (1/2)
+mob_vel_y = vel_y *(1/2)
+
