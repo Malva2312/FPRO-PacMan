@@ -67,12 +67,14 @@ PATH = [[x, y] for x in range(0, 19) for y in range(0, 21) if MAZE_LIMITS[y][x] 
 MOB_BLOCKS = [[-1, 8], [-1, 10], [21,8], [21,10], [-2, 8], [-2, 10], [22,8], [22,10]]
 for y in range(len(MAZE_LIMITS)):
     for x in range(len(MAZE_LIMITS[y])):
-        if MAZE_LIMITS[y][x] == 1 or MAZE_LIMITS[y][x] == 5:
+        if MAZE_LIMITS[y][x] == 1: # or MAZE_LIMITS[y][x] == 5:
             MOB_BLOCKS.append([x,y])
             
 MOB_DIAMETROx , MOB_DIAMETRO = DIAMETROx - 2 , DIAMETRO - 2
             
 MOB_START_POINT = [MAZE_WIDTH/2 - DIAMETROx/2 ,TOP_BOT_BUFF + 6.5* (MAZE_HEIGHT/21) - MOB_DIAMETRO/2]
+INKY_START_POINT = [MAZE_WIDTH/2 - DIAMETROx/2, MAZE_HEIGHT/2 - MOB_DIAMETRO/2]
+
 
 mob_vel_x = vel_x * (3/4)
 mob_vel_y = vel_y *(3/4)

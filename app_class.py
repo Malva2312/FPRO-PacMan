@@ -1,7 +1,10 @@
 import pygame, sys
 from settings import *
 from Player import *
+
 from Mob import *
+from INKY import *
+
 import copy
 
 pygame.init()
@@ -49,7 +52,9 @@ class App:
                 self.start_draw()
                 self.lifes = 3
                 self.player =  Player(self, START_POINT.copy())
+                
                 self.mob = Mob(self, MOB_START_POINT.copy())
+                self.inky = INKY(self, INKY_START_POINT.copy()) # MUDAR PARA INKY START POINT
         
             elif self.state == "pregame":
                 
@@ -57,6 +62,7 @@ class App:
                 
                 self.player.start_point = START_POINT.copy()
                 self.mob.blinky_start_point = MOB_START_POINT.copy()
+                self.inky.inky_start_point = INKY_START_POINT.copy() # MUDAR PARA INKY START POINT
                 
                 self.keys = pygame.key.get_pressed()
                 self.pregame_events()
@@ -269,6 +275,8 @@ class App:
         
         
         self.mob.draw()
+        self.inky.draw()
+        
         self.player.draw()
         
         pygame.display.update()
@@ -282,7 +290,10 @@ class App:
         
         
         self.move(self.keys, vel_x, vel_y)
-        self.mob.move(mob_vel_x, mob_vel_y)
+        
+        
+        
+        
                 
     def playing_update(self, a_matrix):
         
@@ -306,15 +317,15 @@ class App:
             t = self.clock.tick()
             self.power_up[1] += t
             # print(t)
-        if self.power_up[1] >= 7000:
+        if self.power_up[1] >= 10000:
             self.power_up = [False, 0]
         
         
-        
+        # print(self.power_up)
         if [x for y in a_matrix for x in y if x ==2 or x == 0] == []:
             self.state = "victory"
         
-        if self.state == "playing" and self.power_up[0] == False and ((self.mob.blinky_start_point[0] + MOB_DIAMETROx/2 - self.player.start_point[0] - DIAMETROx/2 )**2 + (self.mob.blinky_start_point[1] + MOB_DIAMETRO/2 - self.player.start_point[1] - DIAMETRO/2)**2) <= (DIAMETROx*(4/5))**2:
+        if self.state == "playing" and self.power_up[0] == False and ( ((self.mob.blinky_start_point[0] + MOB_DIAMETROx/2 - self.player.start_point[0] - DIAMETROx/2 )**2 + (self.mob.blinky_start_point[1] + MOB_DIAMETRO/2 - self.player.start_point[1] - DIAMETRO/2)**2) <= (DIAMETROx*(4/5))**2 or ((self.inky.inky_start_point[0] + MOB_DIAMETROx/2 - self.player.start_point[0] - DIAMETROx/2 )**2 + (self.inky.inky_start_point[1] + MOB_DIAMETRO/2 - self.player.start_point[1] - DIAMETRO/2)**2) <= (DIAMETROx*(4/5))**2 ):
             
             self.lifes -= 1
             
@@ -330,9 +341,12 @@ class App:
         #     pygame.time.delay(15)
             
         # print(self.state, self.lifes)
-        
-        
-            
+        if self.power_up[0]:
+            self.inky.move(mob_vel_x * (1/2), mob_vel_y * (1/2), self.player.start_point if self.power_up[0] == False else [(self.inky.inky_start_point[0] - self.player.start_point[0]) + self.inky.inky_start_point[0], (self.inky.inky_start_point[1] - self.player.start_point[1]) + self.inky.inky_start_point[1]])
+            self.mob.move(mob_vel_x * (1/2), mob_vel_y * (1/2), self.player.start_point if self.power_up[0] == False else [(self.mob.blinky_start_point[0] - self.player.start_point[0]) + self.mob.blinky_start_point[0], (self.mob.blinky_start_point[1] - self.player.start_point[1]) + self.mob.blinky_start_point[1]])
+        else:
+            self.inky.move(mob_vel_x , mob_vel_y , self.player.start_point if self.power_up[0] == False else [(self.inky.inky_start_point[0] - self.player.start_point[0]) + self.inky.inky_start_point[0], (self.inky.inky_start_point[1] - self.player.start_point[1]) + self.inky.inky_start_point[1]])
+            self.mob.move(mob_vel_x, mob_vel_y, self.player.start_point if self.power_up[0] == False else [(self.mob.blinky_start_point[0] - self.player.start_point[0]) + self.mob.blinky_start_point[0], (self.mob.blinky_start_point[1] - self.player.start_point[1]) + self.mob.blinky_start_point[1]])
         
         
     
@@ -352,6 +366,8 @@ class App:
         
         
         self.mob.draw()
+        self.inky.draw()
+        
         self.player.draw()
         
         

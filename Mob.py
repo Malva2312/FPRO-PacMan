@@ -89,6 +89,9 @@ class Mob:
         
         self.blinky = pygame.transform.scale(self.blinky, (MOB_DIAMETROx, MOB_DIAMETRO))
         self.blinky_0 = self.blinky
+        
+        self.scared = pygame.image.load("scared ghost.png")
+        self.scared = pygame.transform.scale(self.scared, (MOB_DIAMETROx, MOB_DIAMETRO))
     
     def matrix_pos(self,position):
         
@@ -156,14 +159,14 @@ class Mob:
         self.move_direction = pos[2]
     
     
-    def move(self, vel_x, vel_y):
+    def move(self, vel_x, vel_y, goal):
         self.matrix_pos(self.blinky_start_point)        
         
         
-        X, Y = abs(self.app.player.start_point[0] - self.blinky_start_point[0]),  abs(self.app.player.start_point[1] - self.blinky_start_point[1])
+        X, Y = abs(goal[0] - self.blinky_start_point[0]),  abs(goal[1] - self.blinky_start_point[1])
         
-        ABSx = abs( self.app.player.start_point[0] - self.blinky_start_point[0]) > 1
-        ABSy = abs(  self.app.player.start_point[1] - self.blinky_start_point[1] ) > 1
+        ABSx = abs( goal[0] - self.blinky_start_point[0]) > 1
+        ABSy = abs(  goal[1] - self.blinky_start_point[1] ) > 1
         
         
         
@@ -171,7 +174,7 @@ class Mob:
         
 ################################################################################    
 
-        # goal = [(self.app.player.start_point[0] + DIAMETROx/2 + vel_x)//(MAZE_WIDTH/19), (self.app.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)]
+        # goal = [(goal[0] + DIAMETROx/2 + vel_x)//(MAZE_WIDTH/19), (goal[1] + DIAMETRO/2 - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)]
         # # goal = [18, 1]
         # move = self.next_move(goal,self.blinky_start_point, BLOCKS_POS) #BLOCKS_POS
         
@@ -204,26 +207,26 @@ class Mob:
         
         if self.count == 0:
             if X >= Y:
-                if (self.app.player.start_point[0] < self.blinky_start_point[0] and self.move_left) and ABSx:    # or X > Y:
+                if (goal[0] < self.blinky_start_point[0] and self.move_left) and ABSx:    # or X > Y:
                     self.blinky_move_up = False
                     self.blinky_move_down = False
                     self.blinky_move_left = True
                     self.blinky_move_right = False
                     
-                elif self.app.player.start_point[0] > self.blinky_start_point[0] and self.move_right and ABSx: # and X>Y:
+                elif goal[0] > self.blinky_start_point[0] and self.move_right and ABSx: # and X>Y:
                     self.blinky_move_up = False
                     self.blinky_move_down = False
                     self.blinky_move_left = False
                     self.blinky_move_right = True
                     
-                elif self.app.player.start_point[1] < self.blinky_start_point[1] and self.move_up and ABSy:  #  and Y>X:
+                elif goal[1] < self.blinky_start_point[1] and self.move_up and ABSy:  #  and Y>X:
                     self.blinky_move_up = True
                     self.blinky_move_down = False
                     self.blinky_move_left = False
                     self.blinky_move_right = False
                     
                     
-                elif self.app.player.start_point[1] > self.blinky_start_point[1] and self.move_down and ABSy: # and Y>X:
+                elif goal[1] > self.blinky_start_point[1] and self.move_down and ABSy: # and Y>X:
                     self.blinky_move_up = False
                     self.blinky_move_down = True
                     self.blinky_move_left = False
@@ -235,26 +238,26 @@ class Mob:
                     self.count = 1
                     
             elif Y >= X:
-                if self.app.player.start_point[1] < self.blinky_start_point[1] and self.move_up and ABSy:  #  and Y>X:
+                if goal[1] < self.blinky_start_point[1] and self.move_up and ABSy:  #  and Y>X:
                     self.blinky_move_up = True
                     self.blinky_move_down = False
                     self.blinky_move_left = False
                     self.blinky_move_right = False
                     
                     
-                elif self.app.player.start_point[1] > self.blinky_start_point[1] and self.move_down and ABSy: # and Y>X:
+                elif goal[1] > self.blinky_start_point[1] and self.move_down and ABSy: # and Y>X:
                     self.blinky_move_up = False
                     self.blinky_move_down = True
                     self.blinky_move_left = False
                     self.blinky_move_right = False
                 
-                elif (self.app.player.start_point[0] < self.blinky_start_point[0] and self.move_left) and ABSx:    # or X > Y:
+                elif (goal[0] < self.blinky_start_point[0] and self.move_left) and ABSx:    # or X > Y:
                     self.blinky_move_up = False
                     self.blinky_move_down = False
                     self.blinky_move_left = True
                     self.blinky_move_right = False
                     
-                elif self.app.player.start_point[0] > self.blinky_start_point[0] and self.move_right and ABSx: # and X>Y:
+                elif goal[0] > self.blinky_start_point[0] and self.move_right and ABSx: # and X>Y:
                     self.blinky_move_up = False
                     self.blinky_move_down = False
                     self.blinky_move_left = False
@@ -275,8 +278,8 @@ class Mob:
             
             # random.shuffle(PATH)
             pos = [0, 0]
-            pos[0] = (self.blinky_start_point[0] - self.app.player.start_point[0]) + self.blinky_start_point[0]
-            pos[1] = (self.blinky_start_point[1] - self.app.player.start_point[1]) + self.blinky_start_point[1]
+            pos[0] = (self.blinky_start_point[0] - goal[0]) + self.blinky_start_point[0]
+            pos[1] = (self.blinky_start_point[1] - goal[1]) + self.blinky_start_point[1]
             
             # print(pos)                                                 # improve the random logic
             
@@ -557,7 +560,7 @@ class Mob:
             #                 self.blinky_move_right = False
         
         
-        # elif not( (self.app.player.start_point[0] < self.blinky_start_point[0] and self.move_left) or (self.app.player.start_point[0] > self.blinky_start_point[0] and self.move_right) or (self.app.player.start_point[1] < self.blinky_start_point[1] and self.move_up) or (self.app.player.start_point[1] > self.blinky_start_point[1] and self.move_down)  ):
+        # elif not( (goal[0] < self.blinky_start_point[0] and self.move_left) or (goal[0] > self.blinky_start_point[0] and self.move_right) or (goal[1] < self.blinky_start_point[1] and self.move_up) or (goal[1] > self.blinky_start_point[1] and self.move_down)  ):
         #     None
             
             
@@ -617,15 +620,17 @@ class Mob:
         
         
     def draw(self):
-        if self.blinky_move_left:
-            self.blinky = self.blinky_0
-        
-        elif self.blinky_move_right:
-            self.blinky = pygame.transform.flip(self.blinky_0, True, False)
+        if not self.app.power_up[0]:
+            if self.blinky_move_left:
+                self.blinky = self.blinky_0
             
+            elif self.blinky_move_right:
+                self.blinky = pygame.transform.flip(self.blinky_0, True, False)
+                
+            else:
+                self.blinky = self.blinky
         else:
-            self.blinky = self.blinky
-        
+            self.blinky = self.scared
         self.app.screen.blit(self.blinky, (self.blinky_start_point))
             
         
