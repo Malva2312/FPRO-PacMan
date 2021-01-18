@@ -26,11 +26,11 @@ DIAMETRO = int(MAZE_HEIGHT/21) -2
 RADIOS = DIAMETROx/2
 START_POINT =[MAZE_WIDTH/2 -    DIAMETROx/2 ,TOP_BOT_BUFF/2 + 15.5 * MAZE_HEIGHT/21 - DIAMETRO/2]
 
-vel_x = RADIOS/2 - 0.75 * MAZE_WIDTH/19/2/3                #tenho que ajustar a velocidade
-vel_y = RADIOS/2 - 0.75 * MAZE_WIDTH/19/2/3 #RADIOS/2 - 0.75 * MAZE_HEIGHT/21/3/2
+vel_x = RADIOS/2 - 0.70 * MAZE_WIDTH/19/2/3                #tenho que ajustar a velocidade
+vel_y = RADIOS/2 - 0.70 * MAZE_WIDTH/19/2/3 #RADIOS/2 - 0.75 * MAZE_HEIGHT/21/3/2
 
 
-MAZE_LIMITS = [
+MAZE_LIMITS =tuple(tuple(x)for x in (
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],    #0 == points, 1 == walls , 2 == big points, 3 = nothing 5 = only for ghost
     [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
     [1,0,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,0,1],
@@ -51,7 +51,9 @@ MAZE_LIMITS = [
     [1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,1],
     [1,0,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,0,1],
     [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]))
+
+
 
 BLOCKS_POS = [[-1, 8], [-1, 10], [21,8], [21,10], [-2, 8], [-2, 10], [22,8], [22,10]]
 for y in range(len(MAZE_LIMITS)):
@@ -59,6 +61,8 @@ for y in range(len(MAZE_LIMITS)):
         if MAZE_LIMITS[y][x] == 1 or MAZE_LIMITS[y][x] == 5:
             BLOCKS_POS.append([x,y])
             
+PATH = [[x, y] for x in range(0, 19) for y in range(0, 21) if MAZE_LIMITS[y][x] != 1 ]
+
 # mob settings
 MOB_BLOCKS = [[-1, 8], [-1, 10], [21,8], [21,10], [-2, 8], [-2, 10], [22,8], [22,10]]
 for y in range(len(MAZE_LIMITS)):
@@ -70,6 +74,6 @@ MOB_DIAMETROx , MOB_DIAMETRO = DIAMETROx - 2 , DIAMETRO - 2
             
 MOB_START_POINT = [MAZE_WIDTH/2 - DIAMETROx/2 ,TOP_BOT_BUFF + 6.5* (MAZE_HEIGHT/21) - MOB_DIAMETRO/2]
 
-mob_vel_x = vel_x * (2/3)
-mob_vel_y = vel_y *(2/3)
+mob_vel_x = vel_x * (3/4)
+mob_vel_y = vel_y *(3/4)
 

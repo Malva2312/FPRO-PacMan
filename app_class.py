@@ -2,33 +2,37 @@ import pygame, sys
 from settings import *
 from Player import *
 from Mob import *
+import copy
 
 pygame.init()
 # vec = pygame.math.Vector2
 
 class App:
     def __init__(self):
+        
+        
+        
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()
+        self.time = 0
+        
         self.running = True
         self.state = "start"
         
         self.cell_width = MAZE_WIDTH/23.5789
         self.cell_height = MAZE_HEIGHT/25.255
-        
-        self.player =  Player(self, START_POINT)
-        self.mob = Mob(self, MOB_START_POINT)
-        
-        self.map_matrix = MAZE_LIMITS
-        
+       
+        # self.map = MAZE_LIMITS
+        # self.map_matrix = [list(x) for x in MAZE_LIMITS]
+         
         self.move_up = False
         self.move_down = False
-        self.move_left = False
+        self.move_left = True
         self.move_right = False
         
-        # self.player.animation_count = 0
+        self.power_up = [False, 0]
         
-        self.score = 0
+        self.high_score = 0
         
         self.load()
         
@@ -36,24 +40,68 @@ class App:
     def run(self):
         while self.running:
             if self.state == "start":
+                
+                self.map_matrix = [list(x) for x in MAZE_LIMITS]
+                self.score = 0
+                
                 self.start_events()
                 self.start_update()
                 self.start_draw()
+                self.lifes = 3
+                self.player =  Player(self, START_POINT.copy())
+                self.mob = Mob(self, MOB_START_POINT.copy())
+        
+            elif self.state == "pregame":
+                
+                
+                
+                self.player.start_point = START_POINT.copy()
+                self.mob.blinky_start_point = MOB_START_POINT.copy()
+                
+                self.keys = pygame.key.get_pressed()
+                self.pregame_events()
+                self.pregame_update()
+                self.pregame_draw()
+                
+                
             elif self.state == "playing":
                 self.keys = pygame.key.get_pressed()
                 self.playing_events()
-                self.playing_update()
+                self.playing_update(self.map_matrix)
                 self.playing_draw()
+                
+            elif self.state == "victory":
+                self.victory_events()
+                self.victory_update()
+                self.victory_draw()
+            
+            elif self.state == "game over":
+                    self.game_over_events()
+                    self.game_over_update()
+                    self.game_over_draw()
+                    
             else:
                 self.running = False
                 
             # self.clock.tick(FPS)
-            pygame.time.delay(20)    #????
+            pygame.time.delay(15)    #????
+            # print(MAZE_LIMITS)
         pygame.quit()
         sys.exit()
         
     
 ####################################################### DRAW
+    def draw_lifes(self, lifes):
+        if lifes == 3:
+            self.screen.blit(self.n_lifes, ( TOP_BOT_BUFF , HEIGHT - TOP_BOT_BUFF/2))
+            self.screen.blit(self.n_lifes, ( TOP_BOT_BUFF/2 , HEIGHT - TOP_BOT_BUFF/2))
+        
+        elif lifes == 2:
+            self.screen.blit(self.n_lifes, ( TOP_BOT_BUFF/2 , HEIGHT - TOP_BOT_BUFF/2))
+        else:
+            pass
+
+
     def draw_some_text(self, astring, screen, position, size, colour, font_name, CENTER_WIDTH = True,CENTER_HEIGHT=True):
        font = pygame.font.SysFont(font_name, size) 
        text = font.render(astring, False, colour)
@@ -69,6 +117,8 @@ class App:
         self.background = pygame.image.load("PAC_MAN_MAZE.png")
         self.background = pygame.transform.scale(self.background, (MAZE_WIDTH, MAZE_HEIGHT))
         
+        self.n_lifes = pygame.image.load("pacman_mid2.png")
+        self.n_lifes = pygame.transform.scale(self.n_lifes, (TOP_BOT_BUFF//2, TOP_BOT_BUFF//2))
     
     def draw_grid(self):
         for x in range(0, 19):
@@ -133,8 +183,6 @@ class App:
                 self.move_down = False
         
         
-        # 330.9342105263149
-        # 96.0657894736841
         if self.player.move_left and self.move_left:
             
             if self.player.start_point[0] - vel_x + DIAMETROx < 0:
@@ -164,7 +212,6 @@ class App:
         if self.move_down and self.player.move_down:
             self.player.start_point[1] += vel_y
             
-        # print((self.player.move_left and self.move_left) or (self.move_right and self.player.move_right) or (self.move_up and self.player.move_up) or (self.move_down and self.player.move_down))
         
         if (self.player.move_left and self.move_left) or (self.move_right and self.player.move_right) or (self.move_up and self.player.move_up) or (self.move_down and self.player.move_down):
             
@@ -174,14 +221,13 @@ class App:
         else:
             self.player.animation_count = 0
             
-        # print(self.player.animation_count)
 ####################################################### INTRODUCTION
     def start_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                self.state = "playing"
+                self.state = "pregame"
                 
                 
     def start_update(self):
@@ -192,6 +238,41 @@ class App:
         self.draw_some_text("PRESS SPACE BAR",self.screen,[WIDTH//2, HEIGHT//2], TEXT_SIZE,ORANJE, START_SOURCE)
         pygame.display.update()
         
+####################################################### PREGAME
+
+    def pregame_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.KEYDOWN and (event.key == pygame.K_LEFT or  event.key == pygame.K_RIGHT):
+                self.state = "playing" 
+                
+                
+    def pregame_update(self):
+        pass
+    
+    def pregame_draw(self):
+        self.screen.fill((0, 0, 0))
+        
+        
+        # self.screen.fill(BLACK)
+        self.screen.blit(self.background, (0, TOP_BOT_BUFF/2))
+        self.draw_some_text("READY!",self.screen,[WIDTH//2, HEIGHT//2 + MAZE_HEIGHT//21], TEXT_SIZE,YELLOW, START_SOURCE)
+        # # self.draw_grid()
+        self.draw_lifes(self.lifes)
+        
+        self.draw_some_text("HIGH SCORE:  {}".format(self.high_score), self.screen, [0, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=False) #HIGH SCORE MUST CHANGE
+        self.draw_some_text("SCORE: {}".format(self.score), self.screen, [3/4 * WIDTH, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=True) #SCORE MUST CHANGE
+        
+        self.draw_points(self.map_matrix)
+        self.draw_big_points(self.map_matrix)
+        
+        
+        self.mob.draw()
+        self.player.draw()
+        
+        pygame.display.update()
+
 
 ####################################################### PLAYING
     def playing_events(self):
@@ -201,26 +282,58 @@ class App:
         
         
         self.move(self.keys, vel_x, vel_y)
-        
+        self.mob.move(mob_vel_x, mob_vel_y)
                 
-    def playing_update(self):
+    def playing_update(self, a_matrix):
         
         
         if int((self.player.start_point[0]  ) // (MAZE_WIDTH/19)) > 0 and int((self.player.start_point[0] + DIAMETROx) // (MAZE_WIDTH/19)) < MAZE_WIDTH:
-            if len(self.map_matrix) > int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21)):
-                if len(self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))]) > int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19)):
-                    if self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] == 0:
+            if len(a_matrix) > int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21)):
+                if len(a_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))]) > int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19)):
+                    if a_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] == 0:
                         self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] = 3
                         self.score += 10
                         
-        # if int((self.player.start_point[0]  ) // (MAZE_WIDTH/19)) > 0 and int((self.player.start_point[0] + DIAMETROx) // (MAZE_WIDTH/19)) < MAZE_WIDTH:
-        #     if len(self.map_matrix) > int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21)):
-        #         if len(self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))]) > int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19)):
-        #             if self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] == 2:
-        #                 self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] = 3
-        #                 self.score += 50
-                        
-        self.mob.move(mob_vel_x, mob_vel_y)
+        if int((self.player.start_point[0]  ) // (MAZE_WIDTH/19)) > 0 and int((self.player.start_point[0] + DIAMETROx) // (MAZE_WIDTH/19)) < MAZE_WIDTH:
+            if len(a_matrix) > int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21)):
+                if len(a_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))]) > int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19)):
+                    if a_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] == 2:
+                        self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] = 3
+                        self.score += 50
+                        self.power_up = [True, 0]
+          
+        if self.power_up[0]:
+            t = self.clock.tick()
+            self.power_up[1] += t
+            # print(t)
+        if self.power_up[1] >= 7000:
+            self.power_up = [False, 0]
+        
+        
+        
+        if [x for y in a_matrix for x in y if x ==2 or x == 0] == []:
+            self.state = "victory"
+        
+        if self.state == "playing" and self.power_up[0] == False and ((self.mob.blinky_start_point[0] + MOB_DIAMETROx/2 - self.player.start_point[0] - DIAMETROx/2 )**2 + (self.mob.blinky_start_point[1] + MOB_DIAMETRO/2 - self.player.start_point[1] - DIAMETRO/2)**2) <= (DIAMETROx*(4/5))**2:
+            
+            self.lifes -= 1
+            
+            if self.lifes ==0:
+                self.state = "game over"
+                
+            else:
+                self.state = "pregame"
+                pygame.time.delay(450)
+        # if self.change:
+        #     self.change = False
+        #     self.state = "pregame"
+        #     pygame.time.delay(15)
+            
+        # print(self.state, self.lifes)
+        
+        
+            
+        
         
     
     def playing_draw(self):
@@ -229,8 +342,10 @@ class App:
         self.screen.blit(self.background, (0, TOP_BOT_BUFF/2))
         # self.draw_grid()
         
-        self.draw_some_text("HIGH SCORE:  {}".format(self.score), self.screen, [0, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=False) #HIGH SCORE MUST CHANGE
-        self.draw_some_text("SCORE: {}".format("0 for now"), self.screen, [3/4 * WIDTH, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=True) #SCORE MUST CHANGE
+        self.draw_lifes(self.lifes)
+        
+        self.draw_some_text("HIGH SCORE:  {}".format(self.high_score), self.screen, [0, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=False) #HIGH SCORE MUST CHANGE
+        self.draw_some_text("SCORE: {}".format(self.score), self.screen, [3/4 * WIDTH, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=True) #SCORE MUST CHANGE
         
         self.draw_points(self.map_matrix)
         self.draw_big_points(self.map_matrix)
@@ -240,17 +355,61 @@ class App:
         self.player.draw()
         
         
+        pygame.display.update()
+        
+########################################################################################## GAME OVER
+    def game_over_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.KEYDOWN: #and event.key == pygame.K_SPACE:
+                self.state = "start"
+                
+                
+    def game_over_update(self):
+        pass
+    
+    def game_over_draw(self):
+        self.screen.fill((0, 0, 0))
         
         
-        # print(self.player.start_point, self.mob.blinky_start_point)
+        self.screen.fill(BLACK)
+        self.screen.blit(self.background, (0, TOP_BOT_BUFF/2))
+        self.draw_some_text("GAME OVER!",self.screen,[WIDTH//2, HEIGHT//2 + MAZE_HEIGHT//21], TEXT_SIZE,RED, START_SOURCE)
+        
+        self.draw_some_text("HIGH SCORE:  {}".format(self.high_score), self.screen, [0, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=False) #HIGH SCORE MUST CHANGE
+        self.draw_some_text("SCORE: {}".format(self.score), self.screen, [3/4 * WIDTH, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=True) #SCORE MUST CHANGE
+        
         
         pygame.display.update()
         
-####################################################### 
+############################################################################# VICTORY
+    def victory_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                self.state = "start"
+                
+                
+    def victory_update(self):
+        if self.score > self.high_score:
+            self.high_score = self.score
     
+    def victory_draw(self):
+        self.screen.fill((0, 0, 0))
         
         
-
-####################################################### 
+        self.screen.fill(BLACK)
+        self.screen.blit(self.background, (0, TOP_BOT_BUFF/2))
+        self.draw_some_text("CONGRATULATIONS!",self.screen,[WIDTH//2, HEIGHT//2 + MAZE_HEIGHT//21], TEXT_SIZE,YELLOW, START_SOURCE)
+        
+        self.draw_some_text("HIGH SCORE:  {}".format(self.high_score), self.screen, [0, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=False) #HIGH SCORE MUST CHANGE
+        self.draw_some_text("SCORE: {}".format(self.score), self.screen, [3/4 * WIDTH, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=True) #SCORE MUST CHANGE
+        
+        
+        pygame.display.update()
+        
+####################################################################################
 app = App()
 app.run()
