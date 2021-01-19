@@ -75,8 +75,6 @@ class Player:
         
         
     def load(self):
-        # self.pac_man = pygame.image.load("pac_man_fill.png")
-        # 125 * 150 PX
         
         self.pac_man02 = pygame.image.load("pacman_mid2.png") #estado 0 (meio aberto) estado 2 
         self.pac_man1 = pygame.image.load("pacman_open2.png") #estado 1 (aberto)

@@ -3,7 +3,6 @@ from settings import *
 from Player import *
 
 from Mob import *
-from INKY import *
 
 import copy
 
@@ -53,20 +52,28 @@ class App:
                 self.lifes = 3
                 self.player =  Player(self, START_POINT.copy())
                 
-                self.mob = Mob(self, MOB_START_POINT.copy())
-                self.inky = INKY(self, INKY_START_POINT.copy()) # MUDAR PARA INKY START POINT
+                self.blinky = Mob(self, MOB_START_POINT.copy(), "blinky.png")
+                self.inky = Mob(self, INKY_START_POINT.copy(), "inky.png") 
+                self.pinky = Mob(self, PINKY_START_POINT.copy(), "pinky.png") # MUDAR PARA PINKY START POINT
+                self.clyde = Mob(self, CLYDE_START_POINT.copy(), "clyde.png" )
+                
         
             elif self.state == "pregame":
                 
                 self.power_up = [False, 0]
                 self.bonus = 0
                 
-                self.power_up_blinky = False
-                self.power_up_inky = False
+                self.blinky.power_up_mob = False
+                self.inky.power_up_mob = False
+                self.pinky.power_up_mob = False
+                self.clyde.power_up_mob = False
                 
                 self.player.start_point = START_POINT.copy()
-                self.mob.blinky_start_point = MOB_START_POINT.copy()
-                self.inky.inky_start_point = INKY_START_POINT.copy() # MUDAR PARA INKY START POINT
+                self.blinky.mob_start_point = MOB_START_POINT.copy()
+                self.inky.mob_start_point = INKY_START_POINT.copy() 
+                self.pinky.mob_start_point = PINKY_START_POINT.copy() # MUDAR PARA PINKY START POINT
+                self.clyde.mob_start_point = CLYDE_START_POINT.copy()
+                
                 
                 self.keys = pygame.key.get_pressed()
                 self.pregame_events()
@@ -95,8 +102,7 @@ class App:
                 self.running = False
                 
             # self.clock.tick(FPS)
-            pygame.time.delay(15)    #????
-            # print(MAZE_LIMITS)
+            pygame.time.delay(20)    #????
         pygame.quit()
         sys.exit()
         
@@ -279,8 +285,10 @@ class App:
         self.draw_big_points(self.map_matrix)
         
         
-        self.mob.draw()
+        self.blinky.draw()
         self.inky.draw()
+        self.pinky.draw()
+        self.clyde.draw()
         
         self.player.draw()
         
@@ -318,14 +326,18 @@ class App:
                         self.score += 50
                         self.power_up = [True, 0]
                         
-                        self.power_up_blinky = True
-                        self.power_up_inky = True
+                        self.blinky.power_up_mob = True
+                        self.inky.power_up_mob = True
+                        self.pinky.power_up_mob = True
+                        self.clyde.power_up_mob = True
         
-       # if self.map_matrix[int((self.mob.blinky_start_point[1] - TOP_BOT_BUFF/2 + MOB_DIAMETRO/2 )//(MAZE_HEIGHT/21))][int((self.mob.blinky_start_point[0] + MOB_DIAMETRO/2)//(MAZE_WIDTH/19))] ==5:
+       # if self.map_matrix[int((self.blinky.mob_start_point[1] - TOP_BOT_BUFF/2 + MOB_DIAMETRO/2 )//(MAZE_HEIGHT/21))][int((self.mob.blinky_start_point[0] + MOB_DIAMETRO/2)//(MAZE_WIDTH/19))] ==5:
 
         if not self.power_up[0]:
-            self.power_up_blinky = False
-            self.power_up_inky = False
+            self.blinky.power_up_mob = False
+            self.inky.power_up_mob = False
+            self.pinky.power_up_mob = False
+            self.clyde.power_up_mob = False
             
         if self.power_up[0]:
             t = self.clock.tick()
@@ -339,10 +351,15 @@ class App:
         
         
         if not self.power_up[0]:
-            self.power_up_blinky = False
-            self.power_up_inky = False
+            self.blinky.power_up_mob = False
+            self.inky.power_up_mob = False
+            self.pinky.power_up_mob = False
+            self.clyde.power_up_mob = False
         
-        self.mob.blinky_colision()
+        self.blinky.mob_colision()
+        self.inky.mob_colision()
+        self.pinky.mob_colision()
+        self.clyde.mob_colision()
         
         if [x for y in a_matrix for x in y if x ==2 or x == 0] == []:
             self.state = "victory"
@@ -351,13 +368,16 @@ class App:
     
         
         
-        # print(self.state, self.lifes)
         if self.power_up[0]:
-            self.inky.move(mob_vel_x * (1/2), mob_vel_y * (1/2), self.player.start_point if self.power_up[0] == False else [(self.inky.inky_start_point[0] - self.player.start_point[0]) + self.inky.inky_start_point[0], (self.inky.inky_start_point[1] - self.player.start_point[1]) + self.inky.inky_start_point[1]])
-            self.mob.move(mob_vel_x * (1/2), mob_vel_y * (1/2), self.player.start_point if self.power_up[0] == False else [(self.mob.blinky_start_point[0] - self.player.start_point[0]) + self.mob.blinky_start_point[0], (self.mob.blinky_start_point[1] - self.player.start_point[1]) + self.mob.blinky_start_point[1]])
+            self.clyde.move(mob_vel_x * (1/2), mob_vel_y * (1/2), self.player.start_point if self.power_up[0] == False else [(self.clyde.mob_start_point[0] - self.player.start_point[0]) + self.clyde.mob_start_point[0], (self.clyde.mob_start_point[1] - self.player.start_point[1]) + self.clyde.mob_start_point[1]]) #mudar goal
+            self.pinky.move(mob_vel_x * (1/2), mob_vel_y * (1/2), self.player.start_point if self.power_up[0] == False else [(self.pinky.mob_start_point[0] - self.player.start_point[0]) + self.pinky.mob_start_point[0], (self.pinky.mob_start_point[1] - self.player.start_point[1]) + self.pinky.mob_start_point[1]]) #mudar goal
+            self.inky.move(mob_vel_x * (1/2), mob_vel_y * (1/2), self.player.start_point if self.power_up[0] == False else [(self.inky.mob_start_point[0] - self.player.start_point[0]) + self.inky.mob_start_point[0], (self.inky.mob_start_point[1] - self.player.start_point[1]) + self.inky.mob_start_point[1]])
+            self.blinky.move(mob_vel_x * (1/2), mob_vel_y * (1/2), self.player.start_point if self.power_up[0] == False else [(self.blinky.mob_start_point[0] - self.player.start_point[0]) + self.blinky.mob_start_point[0], (self.blinky.mob_start_point[1] - self.player.start_point[1]) + self.blinky.mob_start_point[1]])
         else:
-            self.inky.move(mob_vel_x , mob_vel_y , self.player.start_point if self.power_up[0] == False else [(self.inky.inky_start_point[0] - self.player.start_point[0]) + self.inky.inky_start_point[0], (self.inky.inky_start_point[1] - self.player.start_point[1]) + self.inky.inky_start_point[1]])
-            self.mob.move(mob_vel_x, mob_vel_y, self.player.start_point if self.power_up[0] == False else [(self.mob.blinky_start_point[0] - self.player.start_point[0]) + self.mob.blinky_start_point[0], (self.mob.blinky_start_point[1] - self.player.start_point[1]) + self.mob.blinky_start_point[1]])
+            self.clyde.move(mob_vel_x , mob_vel_y , self.player.start_point if self.power_up[0] == False else [(self.clyde.inky_start_point[0] - self.player.start_point[0]) + self.clyde.mob_start_point[0], (self.clyde.mob_start_point[1] - self.player.start_point[1]) + self.clyde.inky_start_point[1]])
+            self.pinky.move(mob_vel_x , mob_vel_y , self.player.start_point if self.power_up[0] == False else [(self.pinky.inky_start_point[0] - self.player.start_point[0]) + self.pinky.mob_start_point[0], (self.pinky.mob_start_point[1] - self.player.start_point[1]) + self.pinky.inky_start_point[1]]) #mudar goal
+            self.inky.move(mob_vel_x , mob_vel_y , self.player.start_point if self.power_up[0] == False else [(self.inky.inky_start_point[0] - self.player.start_point[0]) + self.inky.mob_start_point[0], (self.inky.mob_start_point[1] - self.player.start_point[1]) + self.inky.inky_start_point[1]])
+            self.blinky.move(mob_vel_x, mob_vel_y, self.player.start_point if self.power_up[0] == False else [(self.blinky.mob_start_point[0] - self.player.start_point[0]) + self.blinky.mob_start_point[0], (self.blinky.mob_start_point[1] - self.player.start_point[1]) + self.blinky.mob_start_point[1]])
         
         
     
@@ -376,8 +396,10 @@ class App:
         self.draw_big_points(self.map_matrix)
         
         
-        self.mob.draw()
+        self.blinky.draw()
         self.inky.draw()
+        self.pinky.draw()
+        self.clyde.draw()
         
         self.player.draw()
         

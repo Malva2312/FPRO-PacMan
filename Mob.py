@@ -61,16 +61,17 @@ import random
 
 
 class Mob:
-    def __init__(self, app, point):  #, Color
+    def __init__(self, app, point, png):  #, Color
         self.app = app
-        self.blinky_start_point = point
+        self.mob_start_point = point
         self.center = [point[0] + RADIOS, point[1] + RADIOS -  TOP_BOT_BUFF]
         
+        self.png = png
         
-        self.blinky_move_up = False
-        self.blinky_move_down = False
-        self.blinky_move_left = False
-        self.blinky_move_right = False
+        self.mob_move_up = False
+        self.mob_move_down = False
+        self.mob_move_left = False
+        self.mob_move_right = False
         
         # self.last_direction == "
         
@@ -82,15 +83,17 @@ class Mob:
         
         self.load()
         
+        
+        self.power_up_mob = False
     
     
     def load(self):
         
-        self.blinky = pygame.image.load("blinky.png")
-        self.blinky = pygame.transform.flip(self.blinky, True, False)
+        self.mob = pygame.image.load(self.png)
+        self.mob = pygame.transform.flip(self.mob, True, False)
         
-        self.blinky = pygame.transform.scale(self.blinky, (MOB_DIAMETROx, MOB_DIAMETRO))
-        self.blinky_0 = self.blinky
+        self.mob = pygame.transform.scale(self.mob, (MOB_DIAMETROx, MOB_DIAMETRO))
+        self.mob_0 = self.mob
         
         self.scared = pygame.image.load("scared ghost.png")
         self.scared = pygame.transform.scale(self.scared, (MOB_DIAMETROx, MOB_DIAMETRO))
@@ -98,31 +101,31 @@ class Mob:
     def matrix_pos(self,position):
         
         
-        if self.blinky_start_point[1] + MOB_DIAMETRO  < 8 * MAZE_HEIGHT/21 + TOP_BOT_BUFF:
+        if self.mob_start_point[1] + MOB_DIAMETRO  < 8 * MAZE_HEIGHT/21 + TOP_BOT_BUFF:
             MOB_BLOCKS = BLOCKS_POS
         else:
             MOB_BLOCKS = BLOCKS
         
         
-        if [(self.blinky_start_point[0] + DIAMETROx + vel_x)//(MAZE_WIDTH/19), (self.blinky_start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in MOB_BLOCKS or [(self.blinky_start_point[0] + DIAMETROx + vel_x)//(MAZE_WIDTH/19), (self.blinky_start_point[1] + DIAMETRO - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in MOB_BLOCKS :
+        if [(self.mob_start_point[0] + DIAMETROx + vel_x)//(MAZE_WIDTH/19), (self.mob_start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in MOB_BLOCKS or [(self.mob_start_point[0] + DIAMETROx + vel_x)//(MAZE_WIDTH/19), (self.mob_start_point[1] + DIAMETRO - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in MOB_BLOCKS :
             
             self.move_right = False
         else:
             self.move_right = True
         
-        if [(self.blinky_start_point[0] - vel_x)//(MAZE_WIDTH/19), (self.blinky_start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in MOB_BLOCKS or [(self.blinky_start_point[0] - vel_x)//(MAZE_WIDTH/19), (self.blinky_start_point[1] + DIAMETRO - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in MOB_BLOCKS :
+        if [(self.mob_start_point[0] - vel_x)//(MAZE_WIDTH/19), (self.mob_start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in MOB_BLOCKS or [(self.mob_start_point[0] - vel_x)//(MAZE_WIDTH/19), (self.mob_start_point[1] + DIAMETRO - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in MOB_BLOCKS :
             
             self.move_left = False
         else:
             self.move_left = True
         
-        if [self.blinky_start_point[0]//(MAZE_WIDTH/19), (self.blinky_start_point[1] - TOP_BOT_BUFF/2 + vel_y + DIAMETRO)//(MAZE_HEIGHT/21)] in MOB_BLOCKS or [(self.blinky_start_point[0] + DIAMETROx)//(MAZE_WIDTH/19), (self.blinky_start_point[1] - TOP_BOT_BUFF/2 + vel_y + DIAMETRO)//(MAZE_HEIGHT/21)] in MOB_BLOCKS:
+        if [self.mob_start_point[0]//(MAZE_WIDTH/19), (self.mob_start_point[1] - TOP_BOT_BUFF/2 + vel_y + DIAMETRO)//(MAZE_HEIGHT/21)] in MOB_BLOCKS or [(self.mob_start_point[0] + DIAMETROx)//(MAZE_WIDTH/19), (self.mob_start_point[1] - TOP_BOT_BUFF/2 + vel_y + DIAMETRO)//(MAZE_HEIGHT/21)] in MOB_BLOCKS:
             
             self.move_down = False
         else:
             self.move_down = True
             
-        if [self.blinky_start_point[0]//(MAZE_WIDTH/19), (self.blinky_start_point[1] - TOP_BOT_BUFF/2 - vel_y)//(MAZE_HEIGHT/21)] in MOB_BLOCKS or [(self.blinky_start_point[0] + DIAMETROx)//(MAZE_WIDTH/19), (self.blinky_start_point[1] - TOP_BOT_BUFF/2 - vel_y)//(MAZE_HEIGHT/21)] in MOB_BLOCKS:
+        if [self.mob_start_point[0]//(MAZE_WIDTH/19), (self.mob_start_point[1] - TOP_BOT_BUFF/2 - vel_y)//(MAZE_HEIGHT/21)] in MOB_BLOCKS or [(self.mob_start_point[0] + DIAMETROx)//(MAZE_WIDTH/19), (self.mob_start_point[1] - TOP_BOT_BUFF/2 - vel_y)//(MAZE_HEIGHT/21)] in MOB_BLOCKS:
             
             self.move_up = False
         else:
@@ -130,12 +133,12 @@ class Mob:
             
 
     
-    def blinky_colision(self):
+    def mob_colision(self):
         
-        if self.app.state == "playing" and self.app.power_up_blinky == False and ( ((self.blinky_start_point[0] + MOB_DIAMETROx/2 - self.app.player.start_point[0] - DIAMETROx/2 )**2 + (self.blinky_start_point[1] + MOB_DIAMETRO/2 - self.app.player.start_point[1] - DIAMETRO/2)**2) <= (DIAMETROx*(4/5))**2):
+        if self.app.state == "playing" and self.power_up_mob == False and ( ((self.mob_start_point[0] + MOB_DIAMETROx/2 - self.app.player.start_point[0] - DIAMETROx/2 )**2 + (self.mob_start_point[1] + MOB_DIAMETRO/2 - self.app.player.start_point[1] - DIAMETRO/2)**2) <= (DIAMETROx*(4/5))**2):
             
             self.app.lifes -= 1
-            self.app.power_up_blinky = False
+            self.power_up_mob = False
             if self.app.lifes ==0:
                 self.app.state = "game over"
                 
@@ -145,23 +148,23 @@ class Mob:
                 
                 
                 
-        elif self.app.state == "playing"  and self.app.power_up_blinky  and ( ((self.blinky_start_point[0] + MOB_DIAMETROx/2 - self.app.player.start_point[0] - DIAMETROx/2 )**2 + (self.blinky_start_point[1] + MOB_DIAMETRO/2 - self.app.player.start_point[1] - DIAMETRO/2)**2) <= (DIAMETROx*(4/5))**2):
+        elif self.app.state == "playing"  and self.power_up_mob  and ( ((self.mob_start_point[0] + MOB_DIAMETROx/2 - self.app.player.start_point[0] - DIAMETROx/2 )**2 + (self.mob_start_point[1] + MOB_DIAMETRO/2 - self.app.player.start_point[1] - DIAMETRO/2)**2) <= (DIAMETROx*(4/5))**2):
             
             self.app.bonus += 1
-            self.blinky_start_point = INKY_START_POINT.copy()
+            self.mob_start_point = INKY_START_POINT.copy()
             self.app.score += 200 * self.app.bonus
-            self.app.power_up_blinky = False            
+            self.power_up_mob = False            
             pygame.time.delay(450)
     
     
     def move(self, vel_x, vel_y, goal):
-        self.matrix_pos(self.blinky_start_point)        
+        self.matrix_pos(self.mob_start_point)        
         
         
-        X, Y = abs(goal[0] - self.blinky_start_point[0]),  abs(goal[1] - self.blinky_start_point[1])
+        X, Y = abs(goal[0] - self.mob_start_point[0]),  abs(goal[1] - self.mob_start_point[1])
         
-        ABSx = abs( goal[0] - self.blinky_start_point[0]) > 1
-        ABSy = abs(  goal[1] - self.blinky_start_point[1] ) > 1
+        ABSx = abs( goal[0] - self.mob_start_point[0]) > 1
+        ABSy = abs(  goal[1] - self.mob_start_point[1] ) > 1
         
         
         
@@ -172,53 +175,53 @@ class Mob:
         
 
 ################################################################################
-        if not self.app.power_up_blinky and self.count == 0 and self.app.map_matrix[int((self.blinky_start_point[1] - TOP_BOT_BUFF/2 + MOB_DIAMETRO/2 )//(MAZE_HEIGHT/21))][int((self.blinky_start_point[0] + MOB_DIAMETRO/2)//(MAZE_WIDTH/19))] ==5:
-            self.app.power_up_blinky = False
+        if not self.power_up_mob and self.count == 0 and self.app.map_matrix[int((self.mob_start_point[1] - TOP_BOT_BUFF/2 + MOB_DIAMETRO/2 )//(MAZE_HEIGHT/21))][int((self.mob_start_point[0] + MOB_DIAMETRO/2)//(MAZE_WIDTH/19))] ==5:
+            self.power_up_mob = False
             if self.move_up:
-                self.blinky_move_up = True
-                self.blinky_move_down = False
-                self.blinky_move_left = False
-                self.blinky_move_right = False
+                self.mob_move_up = True
+                self.mob_move_down = False
+                self.mob_move_left = False
+                self.mob_move_right = False
                 
-            elif MAZE_WIDTH/2 < self.blinky_start_point[0] +  MOB_DIAMETROx:
-                self.blinky_move_up = False
-                self.blinky_move_down = False
-                self.blinky_move_left = True
-                self.blinky_move_right = False
+            elif MAZE_WIDTH/2 < self.mob_start_point[0] +  MOB_DIAMETROx:
+                self.mob_move_up = False
+                self.mob_move_down = False
+                self.mob_move_left = True
+                self.mob_move_right = False
             
-            elif MAZE_WIDTH/2 > self.blinky_start_point[0]:
-                self.blinky_move_up = False
-                self.blinky_move_down = False
-                self.blinky_move_left = False
-                self.blinky_move_right = True
+            elif MAZE_WIDTH/2 > self.mob_start_point[0]:
+                self.mob_move_up = False
+                self.mob_move_down = False
+                self.mob_move_left = False
+                self.mob_move_right = True
 ############################################################################## BASIC MOVEMENT INSTROTIONS
         
         elif self.count == 0:
             if X >= Y:
-                if (goal[0] < self.blinky_start_point[0] and self.move_left) and ABSx:    # or X > Y:
-                    self.blinky_move_up = False
-                    self.blinky_move_down = False
-                    self.blinky_move_left = True
-                    self.blinky_move_right = False
+                if (goal[0] < self.mob_start_point[0] and self.move_left) and ABSx:    # or X > Y:
+                    self.mob_move_up = False
+                    self.mob_move_down = False
+                    self.mob_move_left = True
+                    self.mob_move_right = False
                     
-                elif goal[0] > self.blinky_start_point[0] and self.move_right and ABSx: # and X>Y:
-                    self.blinky_move_up = False
-                    self.blinky_move_down = False
-                    self.blinky_move_left = False
-                    self.blinky_move_right = True
+                elif goal[0] > self.mob_start_point[0] and self.move_right and ABSx: # and X>Y:
+                    self.mob_move_up = False
+                    self.mob_move_down = False
+                    self.mob_move_left = False
+                    self.mob_move_right = True
                     
-                elif goal[1] < self.blinky_start_point[1] and self.move_up and ABSy:  #  and Y>X:
-                    self.blinky_move_up = True
-                    self.blinky_move_down = False
-                    self.blinky_move_left = False
-                    self.blinky_move_right = False
+                elif goal[1] < self.mob_start_point[1] and self.move_up and ABSy:  #  and Y>X:
+                    self.mob_move_up = True
+                    self.mob_move_down = False
+                    self.mob_move_left = False
+                    self.mob_move_right = False
                     
                     
-                elif goal[1] > self.blinky_start_point[1] and self.move_down and ABSy: # and Y>X:
-                    self.blinky_move_up = False
-                    self.blinky_move_down = True
-                    self.blinky_move_left = False
-                    self.blinky_move_right = False
+                elif goal[1] > self.mob_start_point[1] and self.move_down and ABSy: # and Y>X:
+                    self.mob_move_up = False
+                    self.mob_move_down = True
+                    self.mob_move_left = False
+                    self.mob_move_right = False
                 
                 
             
@@ -226,30 +229,30 @@ class Mob:
                     self.count = 1
                     
             elif Y >= X:
-                if goal[1] < self.blinky_start_point[1] and self.move_up and ABSy:  #  and Y>X:
-                    self.blinky_move_up = True
-                    self.blinky_move_down = False
-                    self.blinky_move_left = False
-                    self.blinky_move_right = False
+                if goal[1] < self.mob_start_point[1] and self.move_up and ABSy:  #  and Y>X:
+                    self.mob_move_up = True
+                    self.mob_move_down = False
+                    self.mob_move_left = False
+                    self.mob_move_right = False
                     
                     
-                elif goal[1] > self.blinky_start_point[1] and self.move_down and ABSy: # and Y>X:
-                    self.blinky_move_up = False
-                    self.blinky_move_down = True
-                    self.blinky_move_left = False
-                    self.blinky_move_right = False
+                elif goal[1] > self.mob_start_point[1] and self.move_down and ABSy: # and Y>X:
+                    self.mob_move_up = False
+                    self.mob_move_down = True
+                    self.mob_move_left = False
+                    self.mob_move_right = False
                 
-                elif (goal[0] < self.blinky_start_point[0] and self.move_left) and ABSx:    # or X > Y:
-                    self.blinky_move_up = False
-                    self.blinky_move_down = False
-                    self.blinky_move_left = True
-                    self.blinky_move_right = False
+                elif (goal[0] < self.mob_start_point[0] and self.move_left) and ABSx:    # or X > Y:
+                    self.mob_move_up = False
+                    self.mob_move_down = False
+                    self.mob_move_left = True
+                    self.mob_move_right = False
                     
-                elif goal[0] > self.blinky_start_point[0] and self.move_right and ABSx: # and X>Y:
-                    self.blinky_move_up = False
-                    self.blinky_move_down = False
-                    self.blinky_move_left = False
-                    self.blinky_move_right = True
+                elif goal[0] > self.mob_start_point[0] and self.move_right and ABSx: # and X>Y:
+                    self.mob_move_up = False
+                    self.mob_move_down = False
+                    self.mob_move_left = False
+                    self.mob_move_right = True
                 
                 else:
                     self.count = 1
@@ -266,71 +269,70 @@ class Mob:
             
             # random.shuffle(PATH)
             pos = [0, 0]
-            pos[0] = (self.blinky_start_point[0] - goal[0]) + self.blinky_start_point[0]
-            pos[1] = (self.blinky_start_point[1] - goal[1]) + self.blinky_start_point[1]
+            pos[0] = (self.mob_start_point[0] - goal[0]) + self.mob_start_point[0]
+            pos[1] = (self.mob_start_point[1] - goal[1]) + self.mob_start_point[1]
             
-            # print(pos)                                                 # improve the random logic
             
-            X, Y = abs(pos[0] - self.blinky_start_point[0]),  abs(pos[1] - self.blinky_start_point[1])
+            X, Y = abs(pos[0] - self.mob_start_point[0]),  abs(pos[1] - self.mob_start_point[1])
         
-            ABSx = abs( pos[0] - self.blinky_start_point[0]) > 1
-            ABSy = abs(  pos[1] - self.blinky_start_point[1] ) > 1
+            ABSx = abs( pos[0] - self.mob_start_point[0]) > 1
+            ABSy = abs(  pos[1] - self.mob_start_point[1] ) > 1
             
             
             if X >= Y:
-                if (pos[0] < self.blinky_start_point[0] and self.move_left) and ABSx:    # or X > Y:
-                    self.blinky_move_up = False
-                    self.blinky_move_down = False
-                    self.blinky_move_left = True
-                    self.blinky_move_right = False
+                if (pos[0] < self.mob_start_point[0] and self.move_left) and ABSx:    # or X > Y:
+                    self.mob_move_up = False
+                    self.mob_move_down = False
+                    self.mob_move_left = True
+                    self.mob_move_right = False
                     
-                elif pos[0] > self.blinky_start_point[0] and self.move_right and ABSx: # and X>Y:
-                    self.blinky_move_up = False
-                    self.blinky_move_down = False
-                    self.blinky_move_left = False
-                    self.blinky_move_right = True
+                elif pos[0] > self.mob_start_point[0] and self.move_right and ABSx: # and X>Y:
+                    self.mob_move_up = False
+                    self.mob_move_down = False
+                    self.mob_move_left = False
+                    self.mob_move_right = True
                     
-                elif pos[1] < self.blinky_start_point[1] and self.move_up and ABSy:  #  and Y>X:
-                    self.blinky_move_up = True
-                    self.blinky_move_down = False
-                    self.blinky_move_left = False
-                    self.blinky_move_right = False
+                elif pos[1] < self.mob_start_point[1] and self.move_up and ABSy:  #  and Y>X:
+                    self.mob_move_up = True
+                    self.mob_move_down = False
+                    self.mob_move_left = False
+                    self.mob_move_right = False
                     
                     
-                elif pos[1] > self.blinky_start_point[1] and self.move_down and ABSy: # and Y>X:
-                    self.blinky_move_up = False
-                    self.blinky_move_down = True
-                    self.blinky_move_left = False
-                    self.blinky_move_right = False
+                elif pos[1] > self.mob_start_point[1] and self.move_down and ABSy: # and Y>X:
+                    self.mob_move_up = False
+                    self.mob_move_down = True
+                    self.mob_move_left = False
+                    self.mob_move_right = False
             
                 
             
                     
             elif Y >= X:
-                if pos[1] < self.blinky_start_point[1] and self.move_up and ABSy:  #  and Y>X:
-                    self.blinky_move_up = True
-                    self.blinky_move_down = False
-                    self.blinky_move_left = False
-                    self.blinky_move_right = False
+                if pos[1] < self.mob_start_point[1] and self.move_up and ABSy:  #  and Y>X:
+                    self.mob_move_up = True
+                    self.mob_move_down = False
+                    self.mob_move_left = False
+                    self.mob_move_right = False
                     
                     
-                elif pos[1] > self.blinky_start_point[1] and self.move_down and ABSy: # and Y>X:
-                    self.blinky_move_up = False
-                    self.blinky_move_down = True
-                    self.blinky_move_left = False
-                    self.blinky_move_right = False
+                elif pos[1] > self.mob_start_point[1] and self.move_down and ABSy: # and Y>X:
+                    self.mob_move_up = False
+                    self.mob_move_down = True
+                    self.mob_move_left = False
+                    self.mob_move_right = False
                 
-                elif (pos[0] < self.blinky_start_point[0] and self.move_left) and ABSx:    # or X > Y:
-                    self.blinky_move_up = False
-                    self.blinky_move_down = False
-                    self.blinky_move_left = True
-                    self.blinky_move_right = False
+                elif (pos[0] < self.mob_start_point[0] and self.move_left) and ABSx:    # or X > Y:
+                    self.mob_move_up = False
+                    self.mob_move_down = False
+                    self.mob_move_left = True
+                    self.mob_move_right = False
                     
-                elif pos[0] > self.blinky_start_point[0] and self.move_right and ABSx: # and X>Y:
-                    self.blinky_move_up = False
-                    self.blinky_move_down = False
-                    self.blinky_move_left = False
-                    self.blinky_move_right = True
+                elif pos[0] > self.mob_start_point[0] and self.move_right and ABSx: # and X>Y:
+                    self.mob_move_up = False
+                    self.mob_move_down = False
+                    self.mob_move_left = False
+                    self.mob_move_right = True
             
             self.count += 1
             if self.count == 16 * 8:
@@ -352,25 +354,25 @@ class Mob:
             #             a = random.randint(0,3)
                         
             #             if a == 0:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = True
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = True
+            #                 self.mob_move_right = False
             #             elif a == 1:
-            #                 self.blinky_move_up = True
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = True
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = False
             #             elif a == 2:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = True
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = True
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = False
             #             elif a == 3:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = True
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = True
                         
                         
                         
@@ -380,20 +382,20 @@ class Mob:
             #             a = random.randint(0,2)
                         
             #             if a == 0:
-            #                 self.blinky_move_up = True
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = True
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = False
             #             elif a == 1:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = True
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = True
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = False
             #             elif a == 2:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = True
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = True
                         
                         
             #         elif self.move_up and self.move_down and self.move_left:
@@ -401,20 +403,20 @@ class Mob:
             #             a = random.randint(0,2)
                         
             #             if a == 0:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = True
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = True
+            #                 self.mob_move_right = False
             #             elif a == 1:
-            #                 self.blinky_move_up = True
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = True
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = False
             #             elif a == 2:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = True
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = True
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = False
                     
                     
                     
@@ -424,20 +426,20 @@ class Mob:
             #             a = random.randint(0,2)
                         
             #             if a == 0:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = True
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = True
+            #                 self.mob_move_right = False
             #             elif a == 1:
-            #                 self.blinky_move_up = True
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = True
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = False
             #             elif a == 2:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = True
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = True
                     
                     
                     
@@ -447,179 +449,173 @@ class Mob:
             #             a = random.randint(0,2)
                         
             #             if a == 0:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = True
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = True
+            #                 self.mob_move_right = False
             #             elif a == 1:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = True
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = True
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = False
             #             elif a == 2:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = True
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = True
                             
                     
             #         elif self.move_up and self.move_down:
             #             a = random.randint(0,1)
             #             if a == 0:
-            #                 self.blinky_move_up = True
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = True
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = False
             #             elif a == 1:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = True
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = True
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = False
                         
                         
                     
             #         elif self.move_up and self.move_right:
             #             a = random.randint(0,1)
             #             if a == 0:
-            #                 self.blinky_move_up = True
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = True
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = False
             #             elif a == 1:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = True
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = True
                     
                     
             #         elif self.move_up and self.move_left:
             #             a = random.randint(0,1)
             #             if a == 0:
-            #                 self.blinky_move_up = True
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = True
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = False
             #             elif a == 1:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = True
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = True
+            #                 self.mob_move_right = False
                             
                     
             #         elif self.move_down and self.move_right:
             #             a = random.randint(0,1)
             #             if a == 0:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = True
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = True
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = False
             #             elif a == 1:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = True
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = True
                     
                     
             #         elif self.move_down and self.move_left:
             #             a = random.randint(0,1)
             #             if a == 0:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = True
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = True
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = False
             #             elif a == 1:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = True
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = True
+            #                 self.mob_move_right = False
                     
                     
             #         elif self.move_right and self.move_left:
             #             a = random.randint(0,1)
             #             if a == 0:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = False
-            #                 self.blinky_move_right = True
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = False
+            #                 self.mob_move_right = True
             #             elif a == 1:
-            #                 self.blinky_move_up = False
-            #                 self.blinky_move_down = False
-            #                 self.blinky_move_left = True
-            #                 self.blinky_move_right = False
+            #                 self.mob_move_up = False
+            #                 self.mob_move_down = False
+            #                 self.mob_move_left = True
+            #                 self.mob_move_right = False
         
         
-        # elif not( (goal[0] < self.blinky_start_point[0] and self.move_left) or (goal[0] > self.blinky_start_point[0] and self.move_right) or (goal[1] < self.blinky_start_point[1] and self.move_up) or (goal[1] > self.blinky_start_point[1] and self.move_down)  ):
+        # elif not( (goal[0] < self.mob_start_point[0] and self.move_left) or (goal[0] > self.mob_start_point[0] and self.move_right) or (goal[1] < self.mob_start_point[1] and self.move_up) or (goal[1] > self.mob_start_point[1] and self.move_down)  ):
         #     None
             
             
 ############################################################################## OUT OF MAZE LMITS
         
-        if self.blinky_start_point[0]  - MAZE_WIDTH/19 + 1< 0:
-                self.blinky_move_up = False
-                self.blinky_move_down = False
-                self.blinky_move_right = False
-                self.blinky_move_left = True
+        if self.mob_start_point[0]  - MAZE_WIDTH/19 + 1< 0:
+                self.mob_move_up = False
+                self.mob_move_down = False
+                self.mob_move_right = False
+                self.mob_move_left = True
         
-        if self.blinky_start_point[0] +  MOB_DIAMETROx + MAZE_WIDTH/19 -1 > MAZE_WIDTH:
-                self.blinky_move_up = False
-                self.blinky_move_down = False
-                self.blinky_move_right = False
-                self.blinky_move_left = True
+        if self.mob_start_point[0] +  MOB_DIAMETROx + MAZE_WIDTH/19 -1 > MAZE_WIDTH:
+                self.mob_move_up = False
+                self.mob_move_down = False
+                self.mob_move_right = False
+                self.mob_move_left = True
         
         # 330.9342105263149
         # 96.0657894736841
         
         
    ###################### MOVEMENT CALCULATION ##############################     
-        if self.blinky_move_left and self.move_left:
+        if self.mob_move_left and self.move_left:
             
-            if self.blinky_start_point[0] - vel_x + DIAMETROx < 0:
-                self.blinky_start_point[0] = MAZE_WIDTH - (self.blinky_start_point[0] + vel_x)
+            if self.mob_start_point[0] - vel_x + DIAMETROx < 0:
+                self.mob_start_point[0] = MAZE_WIDTH - (self.mob_start_point[0] + vel_x)
                 
             else:
-                self.blinky_start_point[0] -= vel_x
+                self.mob_start_point[0] -= vel_x
                     
                 
-        elif self.move_right and self.blinky_move_right:
+        elif self.move_right and self.mob_move_right:
             
-            if self.blinky_start_point[0] + vel_x  > MAZE_WIDTH:
-                self.blinky_start_point[0] = MAZE_WIDTH - (self.blinky_start_point[0]  + DIAMETRO)
+            if self.mob_start_point[0] + vel_x  > MAZE_WIDTH:
+                self.mob_start_point[0] = MAZE_WIDTH - (self.mob_start_point[0]  + DIAMETRO)
                 
             else:
-                self.blinky_start_point[0] += vel_x
+                self.mob_start_point[0] += vel_x
             
             
-        elif self.move_up and self.blinky_move_up:
+        elif self.move_up and self.mob_move_up:
             
-            self.blinky_start_point[1] -= vel_y
-            
-            
-        elif self.move_down and self.blinky_move_down:
-            self.blinky_start_point[1] += vel_y
+            self.mob_start_point[1] -= vel_y
             
             
-        # print((self.blinky__left and self.move_left) or (self.move_right and self.blinky__right) or (self.move_up and self.blinky__up) or (self.move_down and self.blinky__down))
-        # print(self.blinky_move_up ,self.blinky_move_down, self.blinky_move_left, self.blinky_move_right)
-        # print("up", self.blinky_move_up, self.move_up)
-        # print("down", self.blinky_move_down, self.move_down)
-        # print("left", self.blinky_move_left, self.move_left)
-        # print("right", self.blinky_move_right, self.move_right)
+        elif self.move_down and self.mob_move_down:
+            self.mob_start_point[1] += vel_y
+            
+            
         
         
         
     def draw(self):
-        if not self.app.power_up_blinky:
-            if self.blinky_move_left:
-                self.blinky = self.blinky_0
+        if not self.power_up_mob:
+            if self.mob_move_left:
+                self.mob = self.mob_0
             
-            elif self.blinky_move_right:
-                self.blinky = pygame.transform.flip(self.blinky_0, True, False)
+            elif self.mob_move_right:
+                self.mob = pygame.transform.flip(self.mob_0, True, False)
                 
             else:
-                self.blinky = self.blinky
-            self.app.screen.blit(self.blinky, (self.blinky_start_point))
-        elif self.app.power_up_blinky:
-            # self.blinky = self.scared
-            self.app.screen.blit(self.scared, (self.blinky_start_point))
+                self.mob = self.mob
+            self.app.screen.blit(self.mob, (self.mob_start_point))
+        elif self.power_up_mob:
+            # self.mob = self.scared
+            self.app.screen.blit(self.scared, (self.mob_start_point))
             
         
