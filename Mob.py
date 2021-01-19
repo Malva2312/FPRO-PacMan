@@ -72,9 +72,11 @@ class Mob:
         self.blinky_move_left = False
         self.blinky_move_right = False
         
+        # self.last_direction == "
         
         self.app = app
         
+        self.clock = pygame.time.Clock() 
         
         self.count = 0
         
@@ -94,6 +96,13 @@ class Mob:
         self.scared = pygame.transform.scale(self.scared, (MOB_DIAMETROx, MOB_DIAMETRO))
     
     def matrix_pos(self,position):
+        
+        
+        if self.blinky_start_point[1] + MOB_DIAMETRO  < 8 * MAZE_HEIGHT/21 + TOP_BOT_BUFF:
+            MOB_BLOCKS = BLOCKS_POS
+        else:
+            MOB_BLOCKS = BLOCKS
+        
         
         if [(self.blinky_start_point[0] + DIAMETROx + vel_x)//(MAZE_WIDTH/19), (self.blinky_start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in MOB_BLOCKS or [(self.blinky_start_point[0] + DIAMETROx + vel_x)//(MAZE_WIDTH/19), (self.blinky_start_point[1] + DIAMETRO - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in MOB_BLOCKS :
             
@@ -120,43 +129,29 @@ class Mob:
             self.move_up = True
             
 
-  
     
-  
-    
-    def next_move(self, goal, absolute_pos, blocks):
-            
-        queue = []
+    def blinky_colision(self):
         
-        
-        
-        pos = queue[0]
-        queue.pop(0)
-        
-        count = 0
-        
-        while goal != pos[0] :
+        if self.app.state == "playing" and self.app.power_up_blinky == False and ( ((self.blinky_start_point[0] + MOB_DIAMETROx/2 - self.app.player.start_point[0] - DIAMETROx/2 )**2 + (self.blinky_start_point[1] + MOB_DIAMETRO/2 - self.app.player.start_point[1] - DIAMETRO/2)**2) <= (DIAMETROx*(4/5))**2):
             
-            count += 1
-            
-            pos = queue[0]
-            matrix_pos = pos[0]
-            queue.pop(0)
-            
-            if not [matrix_pos[0], matrix_pos[1] -1] in blocks + pos[1]:
-                queue.append(([matrix_pos[0], matrix_pos[1] - 1], matrix_pos + pos[1], pos[2]))
-            
-            if not [matrix_pos[0], matrix_pos[1] + 1] in blocks + pos[1]:
-                queue.append(([matrix_pos[0], matrix_pos[1] + 1], matrix_pos + pos[1], pos[2]))
-            
-            if not [matrix_pos[0] + 1, matrix_pos[1]] in blocks + pos[1]:
-                queue.append(([matrix_pos[0] +1 , matrix_pos[1]], matrix_pos + pos[1], pos[2]))
-            
-            if not [matrix_pos[0] - 1, matrix_pos[1]] in blocks + pos[1]:
-                queue.append(([matrix_pos[0] - 1 , matrix_pos[1]], matrix_pos + pos[1], pos[2]))
+            self.app.lifes -= 1
+            self.app.power_up_blinky = False
+            if self.app.lifes ==0:
+                self.app.state = "game over"
                 
-        
-        self.move_direction = pos[2]
+            else:
+                self.app.state = "pregame"
+                pygame.time.delay(600)
+                
+                
+                
+        elif self.app.state == "playing"  and self.app.power_up_blinky  and ( ((self.blinky_start_point[0] + MOB_DIAMETROx/2 - self.app.player.start_point[0] - DIAMETROx/2 )**2 + (self.blinky_start_point[1] + MOB_DIAMETRO/2 - self.app.player.start_point[1] - DIAMETRO/2)**2) <= (DIAMETROx*(4/5))**2):
+            
+            self.app.bonus += 1
+            self.blinky_start_point = INKY_START_POINT.copy()
+            self.app.score += 200 * self.app.bonus
+            self.app.power_up_blinky = False            
+            pygame.time.delay(450)
     
     
     def move(self, vel_x, vel_y, goal):
@@ -174,38 +169,31 @@ class Mob:
         
 ################################################################################    
 
-        # goal = [(goal[0] + DIAMETROx/2 + vel_x)//(MAZE_WIDTH/19), (goal[1] + DIAMETRO/2 - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)]
-        # # goal = [18, 1]
-        # move = self.next_move(goal,self.blinky_start_point, BLOCKS_POS) #BLOCKS_POS
         
-        # if self.move_direction == "UP" :
-        #     self.blinky_move_up = True
-        #     self.blinky_move_down = False
-        #     self.blinky_move_left = False
-        #     self.blinky_move_right = False
-        
-        # elif self.move_direction == "DOWN" :
-        #     self.blinky_move_up = False
-        #     self.blinky_move_down = True
-        #     self.blinky_move_left = False
-        #     self.blinky_move_right = False
-        
-        # elif self.move_direction == "LEFT" :
-        #     self.blinky_move_up = False
-        #     self.blinky_move_down = False
-        #     self.blinky_move_left = True
-        #     self.blinky_move_right = False
-            
-        # elif self.move_direction == "RIGHT" :
-        #     self.blinky_move_up = False
-        #     self.blinky_move_down = False
-        #     self.blinky_move_left = False
-        #     self.blinky_move_right = True
 
 ################################################################################
+        if not self.app.power_up_blinky and self.count == 0 and self.app.map_matrix[int((self.blinky_start_point[1] - TOP_BOT_BUFF/2 + MOB_DIAMETRO/2 )//(MAZE_HEIGHT/21))][int((self.blinky_start_point[0] + MOB_DIAMETRO/2)//(MAZE_WIDTH/19))] ==5:
+            self.app.power_up_blinky = False
+            if self.move_up:
+                self.blinky_move_up = True
+                self.blinky_move_down = False
+                self.blinky_move_left = False
+                self.blinky_move_right = False
+                
+            elif MAZE_WIDTH/2 < self.blinky_start_point[0] +  MOB_DIAMETROx:
+                self.blinky_move_up = False
+                self.blinky_move_down = False
+                self.blinky_move_left = True
+                self.blinky_move_right = False
+            
+            elif MAZE_WIDTH/2 > self.blinky_start_point[0]:
+                self.blinky_move_up = False
+                self.blinky_move_down = False
+                self.blinky_move_left = False
+                self.blinky_move_right = True
 ############################################################################## BASIC MOVEMENT INSTROTIONS
         
-        if self.count == 0:
+        elif self.count == 0:
             if X >= Y:
                 if (goal[0] < self.blinky_start_point[0] and self.move_left) and ABSx:    # or X > Y:
                     self.blinky_move_up = False
@@ -620,7 +608,7 @@ class Mob:
         
         
     def draw(self):
-        if not self.app.power_up[0]:
+        if not self.app.power_up_blinky:
             if self.blinky_move_left:
                 self.blinky = self.blinky_0
             
@@ -629,8 +617,9 @@ class Mob:
                 
             else:
                 self.blinky = self.blinky
-        else:
-            self.blinky = self.scared
-        self.app.screen.blit(self.blinky, (self.blinky_start_point))
+            self.app.screen.blit(self.blinky, (self.blinky_start_point))
+        elif self.app.power_up_blinky:
+            # self.blinky = self.scared
+            self.app.screen.blit(self.scared, (self.blinky_start_point))
             
         

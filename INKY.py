@@ -39,6 +39,12 @@ class INKY:
     
     def matrix_pos(self,position):
         
+        if self.inky_start_point[1] + MOB_DIAMETRO  < 8 * MAZE_HEIGHT/21 + TOP_BOT_BUFF:
+            MOB_BLOCKS = BLOCKS_POS
+        else:
+            MOB_BLOCKS = BLOCKS
+        
+        
         if [(self.inky_start_point[0] + DIAMETROx + vel_x)//(MAZE_WIDTH/19), (self.inky_start_point[1] - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in MOB_BLOCKS or [(self.inky_start_point[0] + DIAMETROx + vel_x)//(MAZE_WIDTH/19), (self.inky_start_point[1] + DIAMETRO - TOP_BOT_BUFF/2)//(MAZE_HEIGHT/21)] in MOB_BLOCKS :
             
             self.move_right = False
@@ -65,7 +71,7 @@ class INKY:
             
 
   
-    
+    # def blinky_colision()
   
     
     def next_move(self, goal, absolute_pos, blocks):

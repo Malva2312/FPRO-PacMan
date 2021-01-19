@@ -33,7 +33,7 @@ class App:
         self.move_left = True
         self.move_right = False
         
-        self.power_up = [False, 0]
+        
         
         self.high_score = 0
         
@@ -58,7 +58,11 @@ class App:
         
             elif self.state == "pregame":
                 
+                self.power_up = [False, 0]
+                self.bonus = 0
                 
+                self.power_up_blinky = False
+                self.power_up_inky = False
                 
                 self.player.start_point = START_POINT.copy()
                 self.mob.blinky_start_point = MOB_START_POINT.copy()
@@ -71,6 +75,7 @@ class App:
                 
                 
             elif self.state == "playing":
+                
                 self.keys = pygame.key.get_pressed()
                 self.playing_events()
                 self.playing_update(self.map_matrix)
@@ -312,34 +317,40 @@ class App:
                         self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] = 3
                         self.score += 50
                         self.power_up = [True, 0]
-          
+                        
+                        self.power_up_blinky = True
+                        self.power_up_inky = True
+        
+       # if self.map_matrix[int((self.mob.blinky_start_point[1] - TOP_BOT_BUFF/2 + MOB_DIAMETRO/2 )//(MAZE_HEIGHT/21))][int((self.mob.blinky_start_point[0] + MOB_DIAMETRO/2)//(MAZE_WIDTH/19))] ==5:
+
+        if not self.power_up[0]:
+            self.power_up_blinky = False
+            self.power_up_inky = False
+            
         if self.power_up[0]:
             t = self.clock.tick()
             self.power_up[1] += t
-            # print(t)
-        if self.power_up[1] >= 10000:
+            
+        if self.power_up[1] >= 7000:
             self.power_up = [False, 0]
+            self.bonus = 0
+            
+        self.clock.tick()
         
         
-        # print(self.power_up)
+        if not self.power_up[0]:
+            self.power_up_blinky = False
+            self.power_up_inky = False
+        
+        self.mob.blinky_colision()
+        
         if [x for y in a_matrix for x in y if x ==2 or x == 0] == []:
             self.state = "victory"
         
-        if self.state == "playing" and self.power_up[0] == False and ( ((self.mob.blinky_start_point[0] + MOB_DIAMETROx/2 - self.player.start_point[0] - DIAMETROx/2 )**2 + (self.mob.blinky_start_point[1] + MOB_DIAMETRO/2 - self.player.start_point[1] - DIAMETRO/2)**2) <= (DIAMETROx*(4/5))**2 or ((self.inky.inky_start_point[0] + MOB_DIAMETROx/2 - self.player.start_point[0] - DIAMETROx/2 )**2 + (self.inky.inky_start_point[1] + MOB_DIAMETRO/2 - self.player.start_point[1] - DIAMETRO/2)**2) <= (DIAMETROx*(4/5))**2 ):
-            
-            self.lifes -= 1
-            
-            if self.lifes ==0:
-                self.state = "game over"
-                
-            else:
-                self.state = "pregame"
-                pygame.time.delay(450)
-        # if self.change:
-        #     self.change = False
-        #     self.state = "pregame"
-        #     pygame.time.delay(15)
-            
+        
+    
+        
+        
         # print(self.state, self.lifes)
         if self.power_up[0]:
             self.inky.move(mob_vel_x * (1/2), mob_vel_y * (1/2), self.player.start_point if self.power_up[0] == False else [(self.inky.inky_start_point[0] - self.player.start_point[0]) + self.inky.inky_start_point[0], (self.inky.inky_start_point[1] - self.player.start_point[1]) + self.inky.inky_start_point[1]])
@@ -375,6 +386,9 @@ class App:
         
 ########################################################################################## GAME OVER
     def game_over_events(self):
+        if self.score > self.high_score:
+            self.high_score = self.score
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
