@@ -34,14 +34,27 @@ class App:
         
         
         
-        self.high_score = 0
-        
+        try:
+            self.file = open("high_score.txt", "x")
+            self.file.close() 
+            
+            self.file = open("high_score.txt", "w")
+            self.file.write("0")
+            self.file.close() 
+        except:
+            self.file = open("high_score.txt", "r")
+            self.high_score = self.file.read()
+
+            self.file.close()
+                
         self.load()
         
 ####################################################### MAIN_LOOP
     def run(self):
         while self.running:
             if self.state == "start":
+                
+                self.read_stats()
                 
                 self.map_matrix = [list(x) for x in MAZE_LIMITS]
                 self.score = 0
@@ -112,7 +125,17 @@ class App:
         pygame.quit()
         sys.exit()
         
+####################################################### HIGH SCORE
+    def read_stats(self):
+        self.file = open("high_score.txt","r")
+        self.high_score = str(self.file.read())
+        self.file.close()
     
+    def write_stats(self):
+        self.file = open("high_score.txt","w")
+        self.file.write(str(self.high_score))
+        self.file.close()
+        
 ####################################################### DRAW
     def draw_lifes(self, lifes):
         if lifes == 3:
@@ -415,9 +438,10 @@ class App:
         
 ########################################################################################## GAME OVER
     def game_over_events(self):
-        if self.score > self.high_score:
-            self.high_score = self.score
-        
+        if self.score > int(self.high_score):
+            self.high_score = (self.score)
+            self.write_stats()
+            
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -452,8 +476,9 @@ class App:
                 
                 
     def victory_update(self):
-        if self.score > self.high_score:
-            self.high_score = self.score
+        if self.score > int(self.high_score):
+            self.high_score = (self.score)
+            self.write_stats()
     
     def victory_draw(self):
         self.screen.fill((0, 0, 0))

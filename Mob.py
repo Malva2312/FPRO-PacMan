@@ -88,7 +88,7 @@ class Mob:
                 
             else:
                 self.app.state = "pregame"
-                pygame.time.delay(1300)
+                pygame.time.delay(1200)
                 
                 
                 
