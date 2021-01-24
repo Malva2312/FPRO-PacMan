@@ -365,6 +365,7 @@ class App:
                         if not pygame.mixer.music.get_busy():
                             pygame.mixer.music.play()
                         self.power_up = [True, 0]
+                        self.bonus = 0
                         
                         self.blinky.power_up_mob = True
                         self.inky.power_up_mob = True

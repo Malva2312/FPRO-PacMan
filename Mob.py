@@ -104,7 +104,7 @@ class Mob:
             
             self.app.bonus += 1
             self.mob_start_point = INKY_START_POINT.copy()
-            self.app.score += 200 * self.app.bonus
+            self.app.score += 200 * self.app.bonus * 2
             self.power_up_mob = False
             pygame.mixer.music.load("Sounds/pacman_eatghost.mp3")
             pygame.mixer.music.play()
@@ -123,7 +123,6 @@ class Mob:
 
         
 ############################################################################## BASIC MOVEMENT INSTROCTIONS
-        print(self.count == 0)
         if self.count == 0:
             if X >= Y:
                 if (goal[0] < self.mob_start_point[0] and self.move_left) and ABSx:    # or X > Y:
