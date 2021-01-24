@@ -10,8 +10,9 @@
   So why not try this version made by me? Let's see who can score the most points and have fun doing it.
   I really hope you have as much fun playing it as I had fun building it.
   
+  Run "app_class.py" and enjoy.
   Feel free to report any bug or issues.
   
-
+  
 My greetings
 João Malva
