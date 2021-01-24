@@ -63,6 +63,12 @@ class App:
                 self.power_up = [False, 0]
                 self.bonus = 0
                 
+                
+                self.move_up = False
+                self.move_down = False
+                self.move_left = False
+                self.move_right = False
+                
                 self.blinky.power_up_mob = False
                 self.inky.power_up_mob = False
                 self.pinky.power_up_mob = False
@@ -94,9 +100,9 @@ class App:
                 self.victory_draw()
             
             elif self.state == "game over":
-                    self.game_over_events()
-                    self.game_over_update()
-                    self.game_over_draw()
+                self.game_over_events()
+                self.game_over_update()
+                self.game_over_draw()
                     
             else:
                 self.running = False
@@ -395,6 +401,7 @@ class App:
         self.draw_points(self.map_matrix)
         self.draw_big_points(self.map_matrix)
         
+        # self.app.draw_some_text("{}".format(200 * self.app.bonus), self.app.background, self.mob_start_point, 12, YELLOW , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=False)
         
         self.blinky.draw()
         self.inky.draw()

@@ -81,3 +81,8 @@ CLYDE_START_POINT = [MAZE_WIDTH/2 - DIAMETROx/2 + MAZE_WIDTH/19 , MAZE_HEIGHT/2 
 mob_vel_x = vel_x * (3/4)
 mob_vel_y = vel_y *(3/4)
 
+
+#   File "C:\Users\Utilizador\Desktop\Projeto_PacMan\Mob.py", line 178, in move
+#     if not self.power_up_mob and self.count == 0 and self.app.map_matrix[int((self.mob_start_point[1] - TOP_BOT_BUFF/2 + MOB_DIAMETRO/2 )//(MAZE_HEIGHT/21))][int((self.mob_start_point[0] + MOB_DIAMETRO/2)//(MAZE_WIDTH/19))] ==5:
+
+# IndexError: list index out of range
