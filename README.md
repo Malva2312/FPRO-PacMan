@@ -11,6 +11,7 @@
   I really hope you have as much fun playing it as I had fun building it.
   
   Run "app_class.py" and enjoy.
+  
   Feel free to report any bug or issues.
   
   
