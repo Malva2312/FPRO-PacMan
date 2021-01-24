@@ -52,10 +52,10 @@ class App:
                 self.lifes = 3
                 self.player =  Player(self, START_POINT.copy())
                 
-                self.blinky = Mob(self, MOB_START_POINT.copy(), "blinky.png")
-                self.inky = Mob(self, INKY_START_POINT.copy(), "inky.png") 
-                self.pinky = Mob(self, PINKY_START_POINT.copy(), "pinky.png") # MUDAR PARA PINKY START POINT
-                self.clyde = Mob(self, CLYDE_START_POINT.copy(), "clyde.png" )
+                self.blinky = Mob(self, MOB_START_POINT.copy(), "png/blinky.png")
+                self.inky = Mob(self, INKY_START_POINT.copy(), "png/inky.png") 
+                self.pinky = Mob(self, PINKY_START_POINT.copy(), "png/pinky.png") # MUDAR PARA PINKY START POINT
+                self.clyde = Mob(self, CLYDE_START_POINT.copy(), "png/clyde.png" )
                 
         
             elif self.state == "pregame":
@@ -137,10 +137,10 @@ class App:
        screen.blit(text, position)
     
     def load(self):
-        self.background = pygame.image.load("PAC_MAN_MAZE.png")
+        self.background = pygame.image.load("png/PAC_MAN_MAZE.png")
         self.background = pygame.transform.scale(self.background, (MAZE_WIDTH, MAZE_HEIGHT))
         
-        self.n_lifes = pygame.image.load("pacman_mid2.png")
+        self.n_lifes = pygame.image.load("png/pacman_mid2.png")
         self.n_lifes = pygame.transform.scale(self.n_lifes, (TOP_BOT_BUFF//2, TOP_BOT_BUFF//2))
     
     def draw_grid(self):

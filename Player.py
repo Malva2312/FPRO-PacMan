@@ -76,12 +76,12 @@ class Player:
         
     def load(self):
         
-        self.pac_man02 = pygame.image.load("pacman_mid2.png") #estado 0 (meio aberto) estado 2 
-        self.pac_man1 = pygame.image.load("pacman_open2.png") #estado 1 (aberto)
-        self.pac_man3 = pygame.image.load("pac_man_fill2.png")   #estado 3
+        self.pac_man02 = pygame.image.load("png/pacman_mid2.png") #estado 0 (meio aberto) estado 2 
+        self.pac_man1 = pygame.image.load("png/pacman_open2.png") #estado 1 (aberto)
+        self.pac_man3 = pygame.image.load("png/pac_man_fill2.png")   #estado 3
         
-        self.pac_man_mid_up = pygame.image.load("pacman_mid_up2.png")
-        self.pac_man_open_up = pygame.image.load("pacman_open_up2.png")
+        self.pac_man_mid_up = pygame.image.load("png/pacman_mid_up2.png")
+        self.pac_man_open_up = pygame.image.load("png/pacman_open_up2.png")
         
         
         self.pac_man02 = pygame.transform.scale(self.pac_man02, (DIAMETROx,DIAMETRO))

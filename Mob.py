@@ -39,7 +39,7 @@ class Mob:
         self.mob = pygame.transform.scale(self.mob, (MOB_DIAMETROx, MOB_DIAMETRO))
         self.mob_0 = self.mob
         
-        self.scared = pygame.image.load("scared ghost.png")
+        self.scared = pygame.image.load("png/scared ghost.png")
         self.scared = pygame.transform.scale(self.scared, (MOB_DIAMETROx, MOB_DIAMETRO))
     
     def matrix_pos(self,position):
