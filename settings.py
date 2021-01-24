@@ -1,6 +1,3 @@
-# from pygame.math import Vector2 as vec
-
-
 # screen settings
 TOP_BOT_BUFF = 50
 WIDTH, HEIGHT = 224*2, 288*2 +TOP_BOT_BUFF
@@ -22,6 +19,8 @@ START_SOURCE = "arial black"
 # playes settings
 DIAMETROx = int(MAZE_WIDTH/19) - 2
 DIAMETRO = int(MAZE_HEIGHT/21) -2
+
+POWER_DURATION = 7000 #miliseconds 
 
 RADIOS = DIAMETROx/2
 START_POINT =[MAZE_WIDTH/2 -    DIAMETROx/2 ,TOP_BOT_BUFF/2 + 15.5 * MAZE_HEIGHT/21 - DIAMETRO/2]

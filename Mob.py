@@ -5,12 +5,16 @@ import random
                                   
 
 class Mob:
-    def __init__(self, app, point, png):  #, Color
+    def __init__(self, app, point, png, time):  #, Color
         self.app = app
         self.mob_start_point = point
         self.center = [point[0] + RADIOS, point[1] + RADIOS -  TOP_BOT_BUFF]
         
         self.png = png
+        
+        self.clock = pygame.time.Clock()
+        self.time = time
+        self.time_get = 0
         
         self.mob_move_up = False
         self.mob_move_down = False
@@ -21,7 +25,6 @@ class Mob:
         
         self.app = app
         
-        self.clock = pygame.time.Clock() 
         
         self.count = 0
         
@@ -41,7 +44,9 @@ class Mob:
         
         self.scared = pygame.image.load("png/scared ghost.png")
         self.scared = pygame.transform.scale(self.scared, (MOB_DIAMETROx, MOB_DIAMETRO))
-    
+        
+        self.scared_end = pygame.image.load("png/scared_end.png")
+        self.scared_end = pygame.transform.scale(self.scared_end, (MOB_DIAMETROx, MOB_DIAMETRO))
     def matrix_pos(self,position):
         
         
@@ -83,7 +88,10 @@ class Mob:
             
             self.app.lifes -= 1
             self.power_up_mob = False
+            pygame.mixer.music.load("Sounds/pacman_death.mp3")
+            pygame.mixer.music.play()
             if self.app.lifes ==0:
+                pygame.time.delay(1200)
                 self.app.state = "game over"
                 
             else:
@@ -98,6 +106,8 @@ class Mob:
             self.mob_start_point = INKY_START_POINT.copy()
             self.app.score += 200 * self.app.bonus
             self.power_up_mob = False
+            pygame.mixer.music.load("Sounds/pacman_eatghost.mp3")
+            pygame.mixer.music.play()
             pygame.time.delay(450)
     
     
@@ -113,7 +123,7 @@ class Mob:
 
         
 ############################################################################## BASIC MOVEMENT INSTROCTIONS
-        
+        print(self.count == 0)
         if self.count == 0:
             if X >= Y:
                 if (goal[0] < self.mob_start_point[0] and self.move_left) and ABSx:    # or X > Y:
@@ -188,7 +198,6 @@ class Mob:
             
             if [True, self.mirror_move] in MOVEMENT and len(MOVEMENT)>1:
                 MOVEMENT.remove([True, self.mirror_move])
-            # print(MOVEMENT)    
             MOVEMENT = random.choice([x for x in MOVEMENT])
             
             
@@ -215,81 +224,16 @@ class Mob:
                 self.mob_move_down = False
                 self.mob_move_left = True
                 self.mob_move_right = False
-        '''
-            # random.shuffle(PATH)
-            pos = [0, 0]
-            pos[0] = (self.mob_start_point[0] - goal[0]) + self.mob_start_point[0]
-            pos[1] = (self.mob_start_point[1] - goal[1]) + self.mob_start_point[1]
-            
-            
-            X, Y = abs(pos[0] - self.mob_start_point[0]),  abs(pos[1] - self.mob_start_point[1])
-        
-            ABSx = abs( pos[0] - self.mob_start_point[0]) > 1
-            ABSy = abs(  pos[1] - self.mob_start_point[1] ) > 1
-            
-            
-            if X >= Y:
-                if (pos[0] < self.mob_start_point[0] and self.move_left) and ABSx:    # or X > Y:
-                    self.mob_move_up = False
-                    self.mob_move_down = False
-                    self.mob_move_left = True
-                    self.mob_move_right = False
-                    
-                elif pos[0] > self.mob_start_point[0] and self.move_right and ABSx: # and X>Y:
-                    self.mob_move_up = False
-                    self.mob_move_down = False
-                    self.mob_move_left = False
-                    self.mob_move_right = True
-                    
-                elif pos[1] < self.mob_start_point[1] and self.move_up and ABSy:  #  and Y>X:
-                    self.mob_move_up = True
-                    self.mob_move_down = False
-                    self.mob_move_left = False
-                    self.mob_move_right = False
-                    
-                    
-                elif pos[1] > self.mob_start_point[1] and self.move_down and ABSy: # and Y>X:
-                    self.mob_move_up = False
-                    self.mob_move_down = True
-                    self.mob_move_left = False
-                    self.mob_move_right = False
-            
-                
-            
-                    
-            elif Y >= X:
-                if pos[1] < self.mob_start_point[1] and self.move_up and ABSy:  #  and Y>X:
-                    self.mob_move_up = True
-                    self.mob_move_down = False
-                    self.mob_move_left = False
-                    self.mob_move_right = False
-                    
-                    
-                elif pos[1] > self.mob_start_point[1] and self.move_down and ABSy: # and Y>X:
-                    self.mob_move_up = False
-                    self.mob_move_down = True
-                    self.mob_move_left = False
-                    self.mob_move_right = False
-                
-                elif (pos[0] < self.mob_start_point[0] and self.move_left) and ABSx:    # or X > Y:
-                    self.mob_move_up = False
-                    self.mob_move_down = False
-                    self.mob_move_left = True
-                    self.mob_move_right = False
-                    
-                elif pos[0] > self.mob_start_point[0] and self.move_right and ABSx: # and X>Y:
-                    self.mob_move_up = False
-                    self.mob_move_down = False
-                    self.mob_move_left = False
-                    self.mob_move_right = True
-            '''
+       
         self.count += 1
-        if self.count == 16 * 8:
+        if self.count == 6 * 8:
                 self.count = 0
                 
             
 ################################################################################     
-        
+
+
+
 ################################################################################    
     
 ############################################################################## OUT OF MAZE LMITS
@@ -309,8 +253,16 @@ class Mob:
         # 330.9342105263149
         # 96.0657894736841
         
+##############################################################################
+        self.time_get += self.clock.tick()
+        if self.time_get < self.time:
+            self.mob_move_up = False
+            self.mob_move_down = False
+            self.mob_move_right = False
+            self.mob_move_left = False
         
-   ###################### MOVEMENT CALCULATION ##############################     
+        self.clock.tick()
+ ##################### MOVEMENT CALCULATION ##############################     
         if self.mob_move_left and self.move_left:
             self.mirror_move = "RIGHT"
             
@@ -354,8 +306,12 @@ class Mob:
             else:
                 self.mob = self.mob
             self.app.screen.blit(self.mob, (self.mob_start_point))
+            
         elif self.power_up_mob:
-            # self.mob = self.scared
-            self.app.screen.blit(self.scared, (self.mob_start_point))
+            if 2500 > POWER_DURATION - self.app.power_up[1] > 2000 or 1500 > POWER_DURATION - self.app.power_up[1] > 1000 or 500 > POWER_DURATION - self.app.power_up[1] > 0:
+                self.app.screen.blit(self.scared_end, (self.mob_start_point))
+            
+            else:
+                self.app.screen.blit(self.scared, (self.mob_start_point))
             
         

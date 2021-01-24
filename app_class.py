@@ -12,11 +12,10 @@ pygame.init()
 class App:
     def __init__(self):
         
-        
-        
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()
         self.time = 0
+        
         
         self.running = True
         self.state = "start"
@@ -54,6 +53,7 @@ class App:
         while self.running:
             if self.state == "start":
                 
+                
                 self.read_stats()
                 
                 self.map_matrix = [list(x) for x in MAZE_LIMITS]
@@ -65,10 +65,10 @@ class App:
                 self.lifes = 3
                 self.player =  Player(self, START_POINT.copy())
                 
-                self.blinky = Mob(self, MOB_START_POINT.copy(), "png/blinky.png")
-                self.inky = Mob(self, INKY_START_POINT.copy(), "png/inky.png") 
-                self.pinky = Mob(self, PINKY_START_POINT.copy(), "png/pinky.png") # MUDAR PARA PINKY START POINT
-                self.clyde = Mob(self, CLYDE_START_POINT.copy(), "png/clyde.png" )
+                self.blinky = Mob(self, MOB_START_POINT.copy(), "png/blinky.png", 0)
+                self.inky = Mob(self, INKY_START_POINT.copy(), "png/inky.png", 2000) 
+                self.pinky = Mob(self, PINKY_START_POINT.copy(), "png/pinky.png", 4000) 
+                self.clyde = Mob(self, CLYDE_START_POINT.copy(), "png/clyde.png", 6000)
                 
         
             elif self.state == "pregame":
@@ -90,9 +90,13 @@ class App:
                 self.player.start_point = START_POINT.copy()
                 self.blinky.mob_start_point = MOB_START_POINT.copy()
                 self.inky.mob_start_point = INKY_START_POINT.copy() 
-                self.pinky.mob_start_point = PINKY_START_POINT.copy() # MUDAR PARA PINKY START POINT
+                self.pinky.mob_start_point = PINKY_START_POINT.copy() 
                 self.clyde.mob_start_point = CLYDE_START_POINT.copy()
                 
+                self.blinky.time_get = 0
+                self.inky.time_get = 0 
+                self.pinky.time_get = 0
+                self.clyde.time_get = 0
                 
                 self.keys = pygame.key.get_pressed()
                 self.pregame_events()
@@ -274,7 +278,8 @@ class App:
                 self.running = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.state = "pregame"
-                
+                pygame.mixer.music.load("Sounds/pacman_beginning.mp3")
+                pygame.mixer.music.play()
                 
     def start_update(self):
         pass
@@ -346,13 +351,19 @@ class App:
                     if a_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] == 0:
                         self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] = 3
                         self.score += 10
-                        
+                        pygame.mixer.music.load("Sounds/pacman_chomp.mp3")
+                        if not pygame.mixer.music.get_busy():
+                            pygame.mixer.music.play()
+                            
         if int((self.player.start_point[0]  ) // (MAZE_WIDTH/19)) > 0 and int((self.player.start_point[0] + DIAMETROx) // (MAZE_WIDTH/19)) < MAZE_WIDTH:
             if len(a_matrix) > int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21)):
                 if len(a_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))]) > int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19)):
                     if a_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] == 2:
                         self.map_matrix[int((self.player.start_point[1] + DIAMETRO/2 - TOP_BOT_BUFF/2) // (MAZE_HEIGHT/21))][int((self.player.start_point[0] + RADIOS) // (MAZE_WIDTH/19))] = 3
                         self.score += 50
+                        pygame.mixer.music.load("Sounds/pacman_chomp.mp3")
+                        if not pygame.mixer.music.get_busy():
+                            pygame.mixer.music.play()
                         self.power_up = [True, 0]
                         
                         self.blinky.power_up_mob = True
@@ -360,7 +371,6 @@ class App:
                         self.pinky.power_up_mob = True
                         self.clyde.power_up_mob = True
         
-       # if self.map_matrix[int((self.blinky.mob_start_point[1] - TOP_BOT_BUFF/2 + MOB_DIAMETRO/2 )//(MAZE_HEIGHT/21))][int((self.mob.blinky_start_point[0] + MOB_DIAMETRO/2)//(MAZE_WIDTH/19))] ==5:
 
         if not self.power_up[0]:
             self.blinky.power_up_mob = False
@@ -369,10 +379,9 @@ class App:
             self.clyde.power_up_mob = False
             
         if self.power_up[0]:
-            t = self.clock.tick()
-            self.power_up[1] += t
+            self.power_up[1] += self.clock.tick()
             
-        if self.power_up[1] >= 7000:
+        if self.power_up[1] >= POWER_DURATION:
             self.power_up = [False, 0]
             self.bonus = 0
             
@@ -392,6 +401,8 @@ class App:
         
         if [x for y in a_matrix for x in y if x ==2 or x == 0] == []:
             self.state = "victory"
+            pygame.mixer.music.load("Sounds/pacman_extrapac.mp3")
+            pygame.mixer.music.play()
         
         
     
@@ -412,6 +423,8 @@ class App:
     
     def playing_draw(self):
         
+        
+            
         self.screen.fill(BLACK)
         self.screen.blit(self.background, (0, TOP_BOT_BUFF/2))
         # self.draw_grid()
@@ -424,8 +437,8 @@ class App:
         self.draw_points(self.map_matrix)
         self.draw_big_points(self.map_matrix)
         
-        # self.app.draw_some_text("{}".format(200 * self.app.bonus), self.app.background, self.mob_start_point, 12, YELLOW , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=False)
         
+            
         self.blinky.draw()
         self.inky.draw()
         self.pinky.draw()
@@ -458,7 +471,7 @@ class App:
         
         self.screen.fill(BLACK)
         self.screen.blit(self.background, (0, TOP_BOT_BUFF/2))
-        self.draw_some_text("GAME OVER!",self.screen,[WIDTH//2, HEIGHT//2 + MAZE_HEIGHT//21], TEXT_SIZE,RED, START_SOURCE)
+        self.draw_some_text("GAME    OVER!",self.screen,[WIDTH//2, HEIGHT//2 + MAZE_HEIGHT//21], TEXT_SIZE,RED, START_SOURCE)
         
         self.draw_some_text("HIGH SCORE:  {}".format(self.high_score), self.screen, [0, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=False) #HIGH SCORE MUST CHANGE
         self.draw_some_text("SCORE: {}".format(self.score), self.screen, [3/4 * WIDTH, 0], 16, WHITE , START_SOURCE, CENTER_HEIGHT=False, CENTER_WIDTH=True) #SCORE MUST CHANGE
