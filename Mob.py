@@ -102,9 +102,10 @@ class Mob:
                 
         elif self.app.state == "playing"  and self.power_up_mob  and ( ((self.mob_start_point[0] + MOB_DIAMETROx/2 - self.app.player.start_point[0] - DIAMETROx/2 )**2 + (self.mob_start_point[1] + MOB_DIAMETRO/2 - self.app.player.start_point[1] - DIAMETRO/2)**2) <= (DIAMETROx*(4/5))**2):
             
-            self.app.bonus += 1
+            
             self.mob_start_point = INKY_START_POINT.copy()
-            self.app.score += 200 * self.app.bonus * 2
+            self.app.score += 200 * 2 **self.app.bonus
+            self.app.bonus += 1
             self.power_up_mob = False
             pygame.mixer.music.load("Sounds/pacman_eatghost.mp3")
             pygame.mixer.music.play()
