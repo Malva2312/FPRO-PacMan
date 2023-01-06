@@ -14,6 +14,6 @@
   
   Feel free to report any bug or issues.
   
-  
+FEUP - 1st, degree in Computer Engineering 
 My greetings
 João Malva
